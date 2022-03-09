@@ -65,20 +65,70 @@
     font-size: 18px;
 }
 
-div#newProj {
+div#newProj, 
+div#newTask {
     font-size: 15px;
     font-weight: bold;
     border-radius: 15px;
     border: #8d8989 1px solid;
+    color: #757575;
     width: 20px;
     height: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 #list {
-    width: 70vw;
+    width: -webkit-fill-available;
+    display: flex;
+    flex-direction: column;
+    gap: 10%;
+}
+
+#taskHeader {
+    align-self: center;
+    margin-top: 5%;
+    font-size: xx-large;
+}
+
+#taskCounter {
+    margin: 0 5% 2% 5%;
+    border-bottom: 1px solid #757575;
+    padding: 0 10px 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.taskEntry {
+    height: 35px;
+    width: -webkit-fill-available;
+    margin: 0 5% 2% 5%;
+    background-color: #efeded;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.taskPriority {
+    display: flex;
+    gap: 8px;
+    padding: 5px;
+}
+
+.taskEntry img {
+    width: 18px;
+    height: 18px;
+}
+
+.taskEntry .statusBar {
+    padding: 5px 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 #footer {
