@@ -1,21 +1,29 @@
 import './style.css';
 import './projectForm.css';
+
 import star from './images/star.svg'
 import cards from './images/playing-cards.svg'
 import shopping from './images/shopping-bag.svg'
 import heart from './images/heart.svg'
 import book from './images/book-alt.svg'
 
+import crossIcon from './images/cross-circle.svg'
+
 const projectData = (function () {
 
     //Array with icon urls
     const icons = [star, cards, shopping, heart, book]
+    //The one array with projects
+    const projects = [];
 
     //Factory functions to create projects
     function createProject (name, icon) {
+        //This will be an array of objects containing the tasks
         const tasks = [];
+        //This will tell us at what position the array is and will be reassigned dynamically
+        let position = 0;
 
-        return {name, icon, tasks}
+        return {name, icon, tasks, position}
     }
 
     //Factory function to create tasks
@@ -24,11 +32,26 @@ const projectData = (function () {
         return {name, date, description, priority, completed: false}
     }
 
+    //Used in combination with radio buttons to retrieve icon URL
     function extractIcon (index) {
         return icons[index];
     }
 
-    return {extractIcon}
+    //This pushes new project into the projects
+    function addProject (projectObject) {
+        projects.push(projectObject);
+    }
+
+    //Use this to service the project to a for loop for display
+    function returnProject (index) {
+        return projects[index];
+    }
+
+    function returnArrayLength() {
+        return projects.length; 
+    }
+
+    return {extractIcon, createProject, createTask, addProject, returnArrayLength, returnProject}
 
 })(); 
 
@@ -133,6 +156,10 @@ const domElements = (function () {
         confirmBtn.classList.add('confirm');
         confirmBtn.textContent = 'Confirm';
         btnContainer.appendChild(confirmBtn);
+        //TODO ESTRAI DATA, GENERA LA LISTA TASK E MOSTRA IL PROGETTO NUOVO
+        btnContainer.addEventListener('click', function () {
+
+        })
         
         projectDatas.appendChild(btnContainer);
 
@@ -144,12 +171,98 @@ const domElements = (function () {
         document.querySelector('body').insertBefore(formBackdrop, document.querySelector('#header'));
     }
 
+    //This creates a project div for 
+    //TODO COMPLETA
+    function createProjectDiv (projectObject) {
+        //Create main container
+        const projectContainer = document.createElement('div');
+        projectContainer.classList.add('project');
+
+        const projectIcon = document.createElement('img');
+        projectIcon.src = projectObject.icon;
+        projectContainer.appendChild(projectIcon)
+
+        const projectName = document.createElement('p');
+        projectName.textContent = projectObject.name;
+        projectContainer.appendChild(projectName);
+
+        const deleteProjectIcon = document.createElement('img');
+        deleteProjectIcon.src = crossIcon;
+        deleteProjectIcon.addEventListener('click', function () {
+            removeProject();
+            
+        })
+
+
+        projectContainer.addEventListener('click', () => displayProject(projectContainer, projectObject))
+        //TODO: Aggiungi un event listener che mostra il contenuto della task list a destra se clicchi sull'intero div guardando nell'array task dell'oggetto passato tramite callback (vedi factory se nel dubbio)
+    }
+
     function deleteForm (form)  {
         form.remove();
     }
 
-    setTimeout(createProjectForm, 5000)
+    function getProjectData () {
 
-    {createProjectForm}
+        //Get the form
+        const form = document.querySelector('#formBackdrop');
+        
+        //Extract the name
+        let projectName = form.querySelector('#projName').value;
+        let iconUrl;
+
+        //Get the checked button's value
+        const radioButtons = form.querySelectorAll('input[name="icon"]');
+        radioButtons.forEach(button => { 
+            if (button.checked = true) {
+            iconUrl = projectData.extractIcon(Number(button.value));
+            }
+        });
+
+        //TODO BISOGNA DELEGARE QUESTA COSA // FATTO PER IL MOMENTO
+        return [projectName, iconUrl]
+        
+
+    }
+
+    function bindEventListeners () {
+        const newProjectBtn = document.querySelector('#newProj');
+        newProjectBtn.addEventListener('click', createProjectForm);
+    }
+
+    
+
+    bindEventListeners();
+
+    {createProjectForm, getProjectData}
+
+})();
+
+const applicationFlow = (function () {
+
+    //This adds the project to the appropriate array
+    function insertProject () {
+        const projectData = domElements.getProjectData();
+        let newEntry = projectData.createProject(projectData[0],projectData[1]);
+        projectData.addProject(newEntry);
+    }
+
+    //When the project on the sidebar is clicked, show the task list and highlight the appropriate project div
+    function displayProjects () {
+        let length = projectData.returnArrayLength();
+        for (let i = 0; i < length; i++) {
+            //Get the object from the projects array
+            const projectObject = projectData.returnProject(i);
+            //Assign the position so we know where it is on the array for deletion purposes later
+            projectObject.position = i;
+            //This creates the project div and adds the relevant event listeners
+            createProjectDiv(projectObject);
+
+        }
+    }
+
+    function displayTasks(projectObject) {
+
+    }
 
 })();

@@ -38,9 +38,10 @@
 .project {
     width: 160px;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     padding: 8px;
     gap: 4px;
+    cursor: pointer;
 }
 
 .project:hover {
@@ -51,6 +52,16 @@
 .project img {
     height: 20px;
     width: 20px;
+}
+
+.project.active img {
+    filter: brightness(12);
+}
+
+.project.active {
+    background-color: #25cd7b;
+    color: white;
+    border-radius: 8px;
 }
 
 .fixed,
