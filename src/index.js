@@ -156,8 +156,13 @@ const domElements = (function () {
         confirmBtn.classList.add('confirm');
         confirmBtn.textContent = 'Confirm';
         btnContainer.appendChild(confirmBtn);
-        //TODO ESTRAI DATA, GENERA LA LISTA TASK E MOSTRA IL PROGETTO NUOVO
+        
+        //When a new project is created, perform these actions:
+        //Extract the data from form, insert it into the project array
         btnContainer.addEventListener('click', function () {
+            applicationFlow.insertProject();
+            applicationFlow.displayProjects();
+            deleteForm(formBackdrop);
 
         })
         
@@ -188,20 +193,26 @@ const domElements = (function () {
 
         const deleteProjectIcon = document.createElement('img');
         deleteProjectIcon.src = crossIcon;
+        projectContainer.appendChild(deleteProjectIcon);
         deleteProjectIcon.addEventListener('click', function () {
             removeProject();
-            
         })
 
+        projectContainer.addEventListener('click', function () {
+            showProjectInterface(projectObject);
+        })
 
-        projectContainer.addEventListener('click', () => displayProject(projectContainer, projectObject))
+        const sidebar = document.querySelector('#userProjList');
+        sidebar.appendChild(projectContainer);
         //TODO: Aggiungi un event listener che mostra il contenuto della task list a destra se clicchi sull'intero div guardando nell'array task dell'oggetto passato tramite callback (vedi factory se nel dubbio)
     }
 
+    //Feed it a form you want removed and it will do just that
     function deleteForm (form)  {
         form.remove();
     }
 
+    //Extracts icon and name from the form and returns it in array form
     function getProjectData () {
 
         //Get the form
@@ -214,7 +225,7 @@ const domElements = (function () {
         //Get the checked button's value
         const radioButtons = form.querySelectorAll('input[name="icon"]');
         radioButtons.forEach(button => { 
-            if (button.checked = true) {
+            if (button.checked === true) {
             iconUrl = projectData.extractIcon(Number(button.value));
             }
         });
@@ -225,16 +236,77 @@ const domElements = (function () {
 
     }
 
+    //This displays a project when you click on it on the sidebar
+    //It creates the relevant interface and proceeds to append the tasks available
+    function showProjectInterface(projectObject) {
+        //If there is a list, remove it
+        document.querySelector('#list').remove();
+
+        //Main container of the list
+        const list = document.createElement('div');
+        list.setAttribute('id', 'list');
+
+        //Header and Tasklist
+        const taskHeader = document.createElement('div');
+        taskHeader.setAttribute('id', 'taskHeader');
+
+        //Project Icon
+        const iconHeader = document.createElement('img');
+        iconHeader.src = projectObject.icon;
+        iconHeader.style = "height: 40px;"
+        taskHeader.appendChild(iconHeader);
+
+        //Project name
+        const projectTitle = document.createElement('span');
+        projectTitle.textContent = projectObject.name;
+        taskHeader.appendChild(projectTitle)
+
+        //Append the header
+        list.appendChild(taskHeader);
+
+        const taskContainer = document.createElement('div');
+        taskContainer.setAttribute('id', 'taskContainer');
+
+        const taskCounter = document.createElement('div');
+        taskCounter.setAttribute('id', 'taskCounter');
+
+        //Creates paragraph to store number of tasks
+        const counterPara = document.createElement('p');
+        //Looks at array lenght and determines amount of tasks
+        counterPara.textContent =`${projectObject.tasks.length} Tasks`
+        taskCounter.appendChild(counterPara);
+
+        //Create the button to add tasks
+        const newProjectButton = document.createElement('div');
+        newProjectButton.setAttribute('id', 'newTask');
+        newProjectButton.textContent = "+";
+        taskCounter.appendChild(newProjectButton);
+        
+        //Append the whole thing to the container
+        taskContainer.appendChild(taskCounter);
+
+        //This is the container for the tasklist
+        const taskList = document.createElement('div');
+        taskList.setAttribute('id', 'taskList');
+        taskContainer.appendChild(taskList);
+
+        //Append everything
+        list.appendChild(taskContainer);
+        document.querySelector('#main').appendChild(list);
+
+        //TODO CREATE A FUNCTION THAT CAN RENDER THE TASK LIST
+        generateTaskList(projectObject);
+
+    }
+
     function bindEventListeners () {
         const newProjectBtn = document.querySelector('#newProj');
         newProjectBtn.addEventListener('click', createProjectForm);
     }
 
-    
-
     bindEventListeners();
 
-    {createProjectForm, getProjectData}
+    return {createProjectForm, getProjectData, createProjectDiv, showProjectInterface}
 
 })();
 
@@ -242,12 +314,14 @@ const applicationFlow = (function () {
 
     //This adds the project to the appropriate array
     function insertProject () {
-        const projectData = domElements.getProjectData();
-        let newEntry = projectData.createProject(projectData[0],projectData[1]);
+        //
+        const projectInfo = domElements.getProjectData();
+        let newEntry = projectData.createProject(projectInfo[0],projectInfo[1]);
+        //Pushes new object into projects array
         projectData.addProject(newEntry);
     }
 
-    //When the project on the sidebar is clicked, show the task list and highlight the appropriate project div
+    //This creates divs for all the projects in the sidebar, to be used each time a project is added or deleted
     function displayProjects () {
         let length = projectData.returnArrayLength();
         for (let i = 0; i < length; i++) {
@@ -256,7 +330,7 @@ const applicationFlow = (function () {
             //Assign the position so we know where it is on the array for deletion purposes later
             projectObject.position = i;
             //This creates the project div and adds the relevant event listeners
-            createProjectDiv(projectObject);
+            domElements.createProjectDiv(projectObject);
 
         }
     }
@@ -264,5 +338,7 @@ const applicationFlow = (function () {
     function displayTasks(projectObject) {
 
     }
+
+    return {insertProject, displayProjects}
 
 })();
