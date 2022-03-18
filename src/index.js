@@ -1,14 +1,19 @@
+//Importing style sheets
 import './style.css';
 import './projectForm.css';
 
+//This is for project icons
 import star from './images/star.svg'
 import cards from './images/playing-cards.svg'
 import shopping from './images/shopping-bag.svg'
 import heart from './images/heart.svg'
 import book from './images/book-alt.svg'
 
-import crossIcon from './images/cross-circle.svg'
+//Modules
+import domElements from './domElements.js'
+import applicationFlow from './applicationFlow.js'
 
+//This IIFE is where all the data about projects is segregated, and using closures one can only interact with the arrays through the exported functions
 const projectData = (function () {
 
     //Array with icon urls
@@ -47,298 +52,18 @@ const projectData = (function () {
         return projects[index];
     }
 
+    //Returns lenght of array
     function returnArrayLength() {
         return projects.length; 
     }
 
-    return {extractIcon, createProject, createTask, addProject, returnArrayLength, returnProject}
+    //Remove a project from the project array
+    function deleteProject(position) {
+        projects.splice(position, 1);
+    }
+
+    return {extractIcon, createProject, createTask, addProject, returnArrayLength, returnProject, deleteProject}
 
 })(); 
 
-
-const domElements = (function () {
-
-    function createProjectForm () {
-
-        //Backdrop and main container
-        const formBackdrop = document.createElement('div');
-        formBackdrop.setAttribute('id', 'formBackdrop');
-
-        const formContainer = document.createElement('div');
-        formContainer.setAttribute('id', 'newProjectContainer')
-
-        //Header Elements
-        const formHeader = document.createElement('div');
-        formHeader.setAttribute('class', 'formHeader new')
-
-        const formName = document.createElement('p');
-        formName.textContent = 'CREATE PROJECT';
-        formName.setAttribute('class', 'formTitle');
-
-        const formX = document.createElement('p');
-        formX.textContent = 'X';
-        formX.setAttribute('class', 'formClose');
-        formX.addEventListener('click', function () { deleteForm(formBackdrop) })
-
-        formHeader.appendChild(formName);
-        formHeader.appendChild(formX);
-
-        formContainer.appendChild(formHeader)
-
-        //Form Body
-        const projectDatas = document.createElement('div');
-        projectDatas.setAttribute('id', 'projectData')
-
-        //Input for name of Project
-        const nameContainer = document.createElement('div');
-        nameContainer.classList.add('nameContainer')
-
-        const textInputLabel = document.createElement('label');
-        textInputLabel.setAttribute('for', 'projName');
-        textInputLabel.setAttribute('class', 'label');
-        textInputLabel.textContent = 'Project Name:'
-
-        const textInput = document.createElement('input');
-        textInput.setAttribute('type', 'text');
-        textInput.setAttribute('id', 'projName');
-        textInput.setAttribute('class', 'text');
-
-        nameContainer.appendChild(textInputLabel);
-        nameContainer.appendChild(textInput);
-
-        projectDatas.appendChild(nameContainer);
-
-        //Radio buttons for icon selection
-        const picturesContainer = document.createElement('div');
-        picturesContainer.classList.add('picturesContainer');
-
-        const projectIcons = document.createElement('div');
-        projectIcons.setAttribute('id', 'projectPictures');
-
-        const projectLabel = document.createElement('p');
-        projectLabel.classList.add('label');
-        projectLabel.textContent = "Icons:"
-
-        for(let i = 0; i < 5; i++) {
-
-            const wrappingLabel = document.createElement('label');
-
-            const radioButton = document.createElement('input');
-            radioButton.setAttribute('type', 'radio');
-            radioButton.setAttribute('name', 'icon');
-            radioButton.setAttribute('value', `${i}`)
-            wrappingLabel.appendChild(radioButton);
-
-            const image = document.createElement('img');
-            const url = projectData.extractIcon(i);
-            image.src = url;
-            wrappingLabel.appendChild(image)
-
-            projectIcons.appendChild(wrappingLabel);
-        }
-
-        picturesContainer.appendChild(projectLabel);
-        picturesContainer.appendChild(projectIcons);
-
-        projectDatas.appendChild(picturesContainer)
-
-        //Buttons to confirm and cancel
-        const btnContainer = document.createElement('div');
-        btnContainer.classList.add('buttons')
-
-        const cancelBtn = document.createElement('button');
-        cancelBtn.classList.add('cancel');
-        cancelBtn.textContent = 'Cancel';
-        btnContainer.appendChild(cancelBtn);
-        cancelBtn.addEventListener('click', function () { deleteForm(formBackdrop) })
-
-        const confirmBtn = document.createElement('button');
-        confirmBtn.classList.add('confirm');
-        confirmBtn.textContent = 'Confirm';
-        btnContainer.appendChild(confirmBtn);
-        
-        //When a new project is created, perform these actions:
-        //Extract the data from form, insert it into the project array
-        btnContainer.addEventListener('click', function () {
-            applicationFlow.insertProject();
-            applicationFlow.displayProjects();
-            deleteForm(formBackdrop);
-
-        })
-        
-        projectDatas.appendChild(btnContainer);
-
-        //Now append everything to make it appear
-        formContainer.appendChild(projectDatas);
-        
-        formBackdrop.appendChild(formContainer)
-
-        document.querySelector('body').insertBefore(formBackdrop, document.querySelector('#header'));
-    }
-
-    //This creates a project div for 
-    //TODO COMPLETA
-    function createProjectDiv (projectObject) {
-        //Create main container
-        const projectContainer = document.createElement('div');
-        projectContainer.classList.add('project');
-
-        const projectIcon = document.createElement('img');
-        projectIcon.src = projectObject.icon;
-        projectContainer.appendChild(projectIcon)
-
-        const projectName = document.createElement('p');
-        projectName.textContent = projectObject.name;
-        projectContainer.appendChild(projectName);
-
-        const deleteProjectIcon = document.createElement('img');
-        deleteProjectIcon.src = crossIcon;
-        projectContainer.appendChild(deleteProjectIcon);
-        deleteProjectIcon.addEventListener('click', function () {
-            removeProject();
-        })
-
-        projectContainer.addEventListener('click', function () {
-            showProjectInterface(projectObject);
-        })
-
-        const sidebar = document.querySelector('#userProjList');
-        sidebar.appendChild(projectContainer);
-        //TODO: Aggiungi un event listener che mostra il contenuto della task list a destra se clicchi sull'intero div guardando nell'array task dell'oggetto passato tramite callback (vedi factory se nel dubbio)
-    }
-
-    //Feed it a form you want removed and it will do just that
-    function deleteForm (form)  {
-        form.remove();
-    }
-
-    //Extracts icon and name from the form and returns it in array form
-    function getProjectData () {
-
-        //Get the form
-        const form = document.querySelector('#formBackdrop');
-        
-        //Extract the name
-        let projectName = form.querySelector('#projName').value;
-        let iconUrl;
-
-        //Get the checked button's value
-        const radioButtons = form.querySelectorAll('input[name="icon"]');
-        radioButtons.forEach(button => { 
-            if (button.checked === true) {
-            iconUrl = projectData.extractIcon(Number(button.value));
-            }
-        });
-
-        //TODO BISOGNA DELEGARE QUESTA COSA // FATTO PER IL MOMENTO
-        return [projectName, iconUrl]
-        
-
-    }
-
-    //This displays a project when you click on it on the sidebar
-    //It creates the relevant interface and proceeds to append the tasks available
-    function showProjectInterface(projectObject) {
-        //If there is a list, remove it
-        document.querySelector('#list').remove();
-
-        //Main container of the list
-        const list = document.createElement('div');
-        list.setAttribute('id', 'list');
-
-        //Header and Tasklist
-        const taskHeader = document.createElement('div');
-        taskHeader.setAttribute('id', 'taskHeader');
-
-        //Project Icon
-        const iconHeader = document.createElement('img');
-        iconHeader.src = projectObject.icon;
-        iconHeader.style = "height: 40px;"
-        taskHeader.appendChild(iconHeader);
-
-        //Project name
-        const projectTitle = document.createElement('span');
-        projectTitle.textContent = projectObject.name;
-        taskHeader.appendChild(projectTitle)
-
-        //Append the header
-        list.appendChild(taskHeader);
-
-        const taskContainer = document.createElement('div');
-        taskContainer.setAttribute('id', 'taskContainer');
-
-        const taskCounter = document.createElement('div');
-        taskCounter.setAttribute('id', 'taskCounter');
-
-        //Creates paragraph to store number of tasks
-        const counterPara = document.createElement('p');
-        //Looks at array lenght and determines amount of tasks
-        counterPara.textContent =`${projectObject.tasks.length} Tasks`
-        taskCounter.appendChild(counterPara);
-
-        //Create the button to add tasks
-        const newProjectButton = document.createElement('div');
-        newProjectButton.setAttribute('id', 'newTask');
-        newProjectButton.textContent = "+";
-        taskCounter.appendChild(newProjectButton);
-        
-        //Append the whole thing to the container
-        taskContainer.appendChild(taskCounter);
-
-        //This is the container for the tasklist
-        const taskList = document.createElement('div');
-        taskList.setAttribute('id', 'taskList');
-        taskContainer.appendChild(taskList);
-
-        //Append everything
-        list.appendChild(taskContainer);
-        document.querySelector('#main').appendChild(list);
-
-        //TODO CREATE A FUNCTION THAT CAN RENDER THE TASK LIST
-        generateTaskList(projectObject);
-
-    }
-
-    function bindEventListeners () {
-        const newProjectBtn = document.querySelector('#newProj');
-        newProjectBtn.addEventListener('click', createProjectForm);
-    }
-
-    bindEventListeners();
-
-    return {createProjectForm, getProjectData, createProjectDiv, showProjectInterface}
-
-})();
-
-const applicationFlow = (function () {
-
-    //This adds the project to the appropriate array
-    function insertProject () {
-        //
-        const projectInfo = domElements.getProjectData();
-        let newEntry = projectData.createProject(projectInfo[0],projectInfo[1]);
-        //Pushes new object into projects array
-        projectData.addProject(newEntry);
-    }
-
-    //This creates divs for all the projects in the sidebar, to be used each time a project is added or deleted
-    function displayProjects () {
-        let length = projectData.returnArrayLength();
-        for (let i = 0; i < length; i++) {
-            //Get the object from the projects array
-            const projectObject = projectData.returnProject(i);
-            //Assign the position so we know where it is on the array for deletion purposes later
-            projectObject.position = i;
-            //This creates the project div and adds the relevant event listeners
-            domElements.createProjectDiv(projectObject);
-
-        }
-    }
-
-    function displayTasks(projectObject) {
-
-    }
-
-    return {insertProject, displayProjects}
-
-})();
+export default projectData
