@@ -6,7 +6,7 @@ import crossIcon from './images/cross-circle.svg'
 
 const domElements = (function () {
 
-    function createProjectForm () {
+    function createProjectForm (projectObject) {
 
         //Backdrop and main container
         const formBackdrop = document.createElement('div');
@@ -105,8 +105,8 @@ const domElements = (function () {
         confirmBtn.textContent = 'Confirm';
         btnContainer.appendChild(confirmBtn);
         
-        //When a new project is created, perform these actions:
-        //Extract the data from form, insert it into the project array
+        //When a new task is created, perform these actions:
+        //Extract the data from form, insert it into the task array within the project array
         confirmBtn.addEventListener('click', function () {
             applicationFlow.insertProject();
             applicationFlow.displayProjects();
@@ -164,20 +164,22 @@ const domElements = (function () {
         //TODO: Aggiungi un event listener che mostra il contenuto della task list a destra se clicchi sull'intero div guardando nell'array task dell'oggetto passato tramite callback (vedi factory se nel dubbio)
     }
 
-    function createTaskForm () {
+    //Function to dinamically create the form for new tasks.
+    //projectObject needed to determine where to append new tasks/apply deletions
+    function createTaskForm (projectObject) {
         //Backdrop and main container
         const formBackdrop = document.createElement('div');
         formBackdrop.setAttribute('id', 'formBackdrop');
 
         const formContainer = document.createElement('div');
-        formContainer.setAttribute('id', 'newProjectContainer')
+        formContainer.setAttribute('id', 'newTaskContainer')
 
         //Header Elements
         const formHeader = document.createElement('div');
         formHeader.setAttribute('class', 'formHeader new')
 
         const formName = document.createElement('p');
-        formName.textContent = 'CREATE PROJECT';
+        formName.textContent = 'CREATE TASK';
         formName.setAttribute('class', 'formTitle');
 
         const formX = document.createElement('p');
@@ -194,11 +196,155 @@ const domElements = (function () {
         const projectDatas = document.createElement('div');
         projectDatas.setAttribute('id', 'projectData')
 
+        //Input for name of Project
+        const nameContainer = document.createElement('div');
+        nameContainer.classList.add('nameContainer')
+
+        const textInputLabel = document.createElement('label');
+        textInputLabel.setAttribute('for', 'taskName');
+        textInputLabel.setAttribute('class', 'label');
+        textInputLabel.textContent = 'Task name:'
+
+        const textInput = document.createElement('input');
+        textInput.setAttribute('type', 'text');
+        textInput.setAttribute('id', 'taskName');
+        textInput.setAttribute('class', 'text');
+
+        nameContainer.appendChild(textInputLabel);
+        nameContainer.appendChild(textInput);
+
+        //Append the name part to the project data container
+        projectDatas.appendChild(nameContainer);
+
+        //Description Container 
+        const descriptionContainer = document.createElement('div');
+        descriptionContainer.classList.add('descriptionContainer')
+
+        const descrInputLabel = document.createElement('label');
+        descrInputLabel.setAttribute('for', 'taskDescr');
+        descrInputLabel.setAttribute('class', 'label');
+        descrInputLabel.textContent = 'Task description:'
+
+        const textArea = document.createElement('textarea');
+        textArea.setAttribute('rows', '3');
+        textArea.setAttribute('col', '60');
+        textArea.setAttribute('name', 'taskDescr');
+        textArea.setAttribute('id', 'taskDescr');
+
+        descriptionContainer.appendChild(descrInputLabel);
+        descriptionContainer.appendChild(textArea);
+
+        //Append to main container
+        projectDatas.appendChild(descriptionContainer);
+
+        //Date Container
+        const dateContainer = document.createElement('div');
+        dateContainer.classList.add('dateContainer')
+
+        const dateInputLabel = document.createElement('label');
+        dateInputLabel.setAttribute('for', 'taskDate');
+        dateInputLabel.setAttribute('class', 'label');
+        dateInputLabel.textContent = 'Due date:'
+
+        const dateInput = document.createElement('input');
+        dateInput.setAttribute('type', 'date');
+        dateInput.setAttribute('name', 'taskDate');
+        dateInput.setAttribute('value', '2022-05-12');
+        dateInput.setAttribute('id', 'taskDate');
+
+        dateContainer.appendChild(dateInputLabel);
+        dateContainer.appendChild(dateInput);
+
+        projectDatas.appendChild(dateContainer);
+
+        //Priority Container
+        const priorityContainer = document.createElement('div');
+        priorityContainer.classList.add('dateContainer')
+
+        const priorityInputLabel = document.createElement('label');
+        priorityInputLabel.setAttribute('for', 'taskPriority');
+        priorityInputLabel.setAttribute('class', 'label');
+        priorityInputLabel.textContent = 'Task priority:'
+
+        const prioritySelect = document.createElement('select');
+        prioritySelect.setAttribute('id', 'taskPriority');
+        prioritySelect.setAttribute('name', 'taskPriority');
+
+        const priorities = ['Low', 'Medium', 'High']
+        
+        //Dinamically generate the priorities options
+        for(let i = 0; i < priorities.length; i++){
+            const option = document.createElement('option');
+            option.setAttribute('value', `${priorities[i].toLowerCase()}`)
+            option.textContent = priorities[i]
+            prioritySelect.appendChild(option);
+        }
+
+        priorityContainer.appendChild(priorityInputLabel);
+        priorityContainer.appendChild(prioritySelect);
+
+        projectDatas.appendChild(priorityContainer);
+
+        //Buttons to confirm and cancel
+        const btnContainer = document.createElement('div');
+        btnContainer.classList.add('buttons')
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.classList.add('cancel');
+        cancelBtn.textContent = 'Cancel';
+        btnContainer.appendChild(cancelBtn);
+        cancelBtn.addEventListener('click', function () { deleteForm(formBackdrop) })
+
+        const confirmBtn = document.createElement('button');
+        confirmBtn.classList.add('confirm');
+        confirmBtn.textContent = 'Confirm';
+        btnContainer.appendChild(confirmBtn);
+        
+        //I NEED TO CREATE THE FUNCTION TO ADD A TASK TO THE PROJECT ARRAY
+        confirmBtn.addEventListener('click', function () {
+            applicationFlow.insertTask(projectObject);
+            applicationFlow.generateTaskList(projectObject);
+            deleteForm(formBackdrop);
+
+        })
+        
+        projectDatas.appendChild(btnContainer);
+
+        //Now append everything to make it appear
+        formContainer.appendChild(projectDatas);
+        
+        formBackdrop.appendChild(formContainer)
+
+        document.querySelector('body').insertBefore(formBackdrop, document.querySelector('#header'));
+
+
+    }
+
+    function createTaskDiv(projectObject) {
+
     }
 
     //Feed it a form you want removed and it will do just that
     function deleteForm (form)  {
         form.remove();
+    }
+
+    //Extract name, description, date and priority from the form and returns it in array form
+    function getTaskData() {
+
+        //Get the form to avoid querying the dom each time
+        const form = document.querySelector('#formBackdrop');
+
+        //Get all the information
+        let taskName = form.querySelector('#taskName').value;
+        let taskDescr = form.querySelector('#taskDescr').value;
+        //TODO: SEE IF YOU CAN USE THAT LIBRARY FOR DATE FORMATTING
+        let taskDate = form.querySelector('#taskDate').value;
+        let taskPriority = form.querySelector('#taskPriority').value;
+
+        //Return it in array form
+        return [taskName, taskDescr, taskDate, taskPriority]
+
     }
 
     //Extracts icon and name from the form and returns it in array form
@@ -269,6 +415,7 @@ const domElements = (function () {
         const newProjectButton = document.createElement('div');
         newProjectButton.setAttribute('id', 'newTask');
         newProjectButton.textContent = "+";
+        newProjectButton.addEventListener('click', function () { createTaskForm(projectObject) })
         taskCounter.appendChild(newProjectButton);
         
         //Append the whole thing to the container
@@ -284,10 +431,11 @@ const domElements = (function () {
         document.querySelector('#main').appendChild(list);
 
         //TODO CREATE A FUNCTION THAT CAN RENDER THE TASK LIST
-        generateTaskList(projectObject);
+        applicationFlow.generateTaskList(projectObject);
 
     }
 
+    //Generic function to bind the necessary event listeners available from the get go, such as project creation icon
     function bindEventListeners () {
         const newProjectBtn = document.querySelector('#newProj');
         newProjectBtn.addEventListener('click', createProjectForm);
@@ -326,7 +474,7 @@ const domElements = (function () {
 
     bindEventListeners();
 
-    return {createProjectForm, getProjectData, createProjectDiv, showProjectInterface, deleteProjectDivs}
+    return {createProjectForm, getProjectData, createProjectDiv, showProjectInterface, deleteProjectDivs, getTaskData}
 
 })();
 

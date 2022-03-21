@@ -32,9 +32,10 @@ const projectData = (function () {
     }
 
     //Factory function to create tasks
-    function createTask (name, date, description, priority) {
+    function createTask (name, description, date, priority) {
 
-        return {name, date, description, priority, completed: false}
+        //Completed will be useful later and position is to once again identify and delete tasks
+        return {name, description, date, priority, completed: false, position: 0}
     }
 
     //Used in combination with radio buttons to retrieve icon URL
@@ -62,7 +63,11 @@ const projectData = (function () {
         projects.splice(position, 1);
     }
 
-    return {extractIcon, createProject, createTask, addProject, returnArrayLength, returnProject, deleteProject}
+    function addTask(index, newTask) {
+        projects[index].tasks.push(newTask);
+    }
+
+    return {extractIcon, createProject, createTask, addProject, addTask, returnArrayLength, returnProject, deleteProject}
 
 })(); 
 
