@@ -67,7 +67,11 @@ const projectData = (function () {
         projects[index].tasks.push(newTask);
     }
 
-    return {extractIcon, createProject, createTask, addProject, addTask, returnArrayLength, returnProject, deleteProject}
+    function removeTask(objectIndex, taskIndex) {
+        projects[objectIndex].tasks.splice(taskIndex, 1);
+    }
+
+    return {extractIcon, createProject, createTask, addProject, addTask, removeTask, returnArrayLength, returnProject, deleteProject}
 
 })(); 
 

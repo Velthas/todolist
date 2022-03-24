@@ -21,6 +21,10 @@ const applicationFlow = (function () {
         let newTask = projectData.createTask(taskInfo[0], taskInfo[1], taskInfo[2], taskInfo[3])
         //Looks into the array of projects in the given position and appends the new task to the task array
         projectData.addTask(projectObject.position, newTask);
+        //Updates the number of tasks on the list
+        const noOfTasks = document.querySelector('#taskCounter p');
+        let number = (Number(noOfTasks.textContent.split(' ')[0])) + 1;
+        noOfTasks.textContent = number + " Task(s)";
     }
 
     //This creates divs for all the projects in the sidebar, to be used each time a project is added or deleted
@@ -29,7 +33,7 @@ const applicationFlow = (function () {
         //TODO: NOT REALLY IMPORTANT, BUT SEE IF YOU CAN ADD A WAY OF RETAINING WHICH PROJECT WAS ACTIVE
         //Current idea is, give the active object a property of active with a boolean value, only one can have the property at the time so each time a div is clicked you turn it off for everyone else except the one
         //This way you can retain and always find out which project was active before any other action was performed
-        domElements.deleteProjectDivs();
+        domElements.deleteGeneratedDivs('.userProject');
         let length = projectData.returnArrayLength();
         for (let i = 0; i < length; i++) {
             //Get the object from the projects array
@@ -44,21 +48,45 @@ const applicationFlow = (function () {
     }
 
     function generateTaskList(projectObject) {
-
+        domElements.deleteGeneratedDivs('.taskEntry')
         let length = projectObject.tasks.length;
-
         for (let i = 0; i < length; i++) {
             //Get the task from the tasks array within the project
             const taskObject = projectObject.tasks[i];
             taskObject.position = i;
             console.log(taskObject);
 
-            domElements.createTaskDiv(taskObject)
+            domElements.createTaskDiv(taskObject, projectObject)
         }
 
     }
 
-    return {insertProject, displayProjects, insertTask, generateTaskList}
+    //Toggles and untoggles completed status from tasks
+    function changeCompletedStatus(taskObject, taskContainer) {
+        switch (true) {
+            case (taskObject.completed === true):
+                taskObject.completed = false;
+                taskContainer.classList.remove('completed')
+                break;
+            case (taskObject.completed === false):
+                taskObject.completed = true;
+                taskContainer.classList.add('completed')
+        }
+    }
+
+    function deleteTask (taskObject, projectObject) {
+        //Goes into project data and splices task array
+        projectData.removeTask(projectObject.position, taskObject.position);
+        //Regenerate task divs without the deleted one
+        generateTaskList(projectObject);
+        //Updates the number of tasks on the list
+        const noOfTasks = document.querySelector('#taskCounter p');
+        let number = (Number(noOfTasks.textContent.split(' ')[0])) - 1;
+        noOfTasks.textContent = number + " Task(s)";
+        
+    }
+
+    return {insertProject, displayProjects, insertTask, deleteTask, generateTaskList, changeCompletedStatus}
 
 })();
 

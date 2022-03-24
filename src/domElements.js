@@ -4,6 +4,13 @@ import applicationFlow from './applicationFlow.js'
 //This is a cross icon for deletion
 import crossIcon from './images/cross-circle.svg'
 
+//These icons are needed for the task divs
+import squareIcon from './images/square.svg'
+import checkIcon from './images/check.svg'
+import infoIcon from './images/info.svg'
+import editIcon from './images/edit.svg'
+
+
 const domElements = (function () {
 
     function createProjectForm (projectObject) {
@@ -320,8 +327,81 @@ const domElements = (function () {
 
     }
 
-    function createTaskDiv(projectObject) {
+    //Creates a div for a task;
+    function createTaskDiv(taskObject, projectObject) {
+        const taskEntry = document.createElement('div');
+        taskEntry.classList.add('taskEntry');
 
+        switch (true) {
+            case (taskObject.priority === 'low'):
+                taskEntry.classList.add('low');
+                break;
+            case (taskObject.priority === 'medium'):
+                taskEntry.classList.add('medium');
+                break;
+            case (taskObject.priority === 'high'):
+                taskEntry.classList.add('high');
+        }
+
+        //If the task is completed the change is reflected in how the divs are displayed
+        if (taskObject.completed === true) {
+            taskEntry.classList.add('completed');
+        }
+
+        //Container for task priority and task name
+        const taskPriority = document.createElement('div');
+        taskPriority.classList.add('taskPriority');
+        taskEntry.appendChild(taskPriority)
+
+        const completedImg = document.createElement('img');
+        completedImg.src = taskObject.completed === true ? checkIcon : squareIcon
+        completedImg.addEventListener('click', function () {
+            applicationFlow.changeCompletedStatus(taskObject, taskEntry);
+            completedImg.src = taskObject.completed === true ? checkIcon : squareIcon
+        })
+
+        const nameParagraph = document.createElement('p');
+        nameParagraph.textContent = taskObject.name;
+
+        taskPriority.appendChild(completedImg);
+        taskPriority.appendChild(nameParagraph);
+
+        //Icon bar with utility tools
+        const statusBar = document.createElement('div');
+        statusBar.classList.add('statusBar');
+
+        const datePara = document.createElement('p');
+        datePara.classList.add('datePara');
+        datePara.textContent = taskObject.date;
+        statusBar.appendChild(datePara);
+
+
+        //Button to check project info
+        const infoImg = document.createElement('img');
+        infoImg.src = infoIcon
+        infoImg.addEventListener('click', function () { //TODO FUNCTION TO SHOW UNEDITABLE FORM 
+        })
+        statusBar.appendChild(infoImg);
+
+        //Button to edit project info
+        const editImg = document.createElement('img');
+        editImg.src = editIcon;
+        editImg.addEventListener('click', function () { //TODO FUNCTION TO SHOW EDITABLE FORM
+        })
+        statusBar.appendChild(editImg)
+
+        const delImg = document.createElement('img');
+        delImg.src = crossIcon;
+        delImg.addEventListener('click', function () { 
+            applicationFlow.deleteTask(taskObject, projectObject);
+        })
+        statusBar.appendChild(delImg);
+
+        taskEntry.appendChild(taskPriority);
+        taskEntry.appendChild(statusBar);
+
+        //Query the dom to get the list, and then append the project div to it
+        document.querySelector('#taskList').appendChild(taskEntry)
     }
 
     //Feed it a form you want removed and it will do just that
@@ -365,10 +445,8 @@ const domElements = (function () {
             }
         });
 
-        //TODO BISOGNA DELEGARE QUESTA COSA // FATTO PER IL MOMENTO
         return [projectName, iconUrl]
         
-
     }
 
     //This displays a project when you click on it on the sidebar
@@ -443,19 +521,19 @@ const domElements = (function () {
 
     //Before adding or deleting tasks, always delete the content of the appropriate div
     //Elsewise all projects will be doubled on each insertion or deletion
-    function deleteProjectDivs () {
-        console.log('hi');
-
+    function deleteGeneratedDivs (selector) {
+        
         //If this is null, then this is the first project and there is no need to delete anything
-        const firstUserProject = document.querySelector('.userProject');
-        if (firstUserProject === null) return;
+        const firstDiv = document.querySelector(selector);
+        if (firstDiv === null) return;
 
         //Creates a node list with all the user projects
-        const userProjectDivs = Array.from(document.querySelectorAll('.userProject'));
+        const allDivs = Array.from(document.querySelectorAll(selector));
 
         //Iterates over all of the nodes and deletes each one
-        userProjectDivs.forEach(projectDiv => projectDiv.remove() );
+        allDivs.forEach(projectDiv => projectDiv.remove());
     }
+
 
     //Toggles active class for projects 
     function setActive (projectContainer) {
@@ -474,7 +552,7 @@ const domElements = (function () {
 
     bindEventListeners();
 
-    return {createProjectForm, getProjectData, createProjectDiv, showProjectInterface, deleteProjectDivs, getTaskData}
+    return {createProjectForm, getProjectData, createProjectDiv, createTaskDiv, showProjectInterface, deleteGeneratedDivs, getTaskData}
 
 })();
 
