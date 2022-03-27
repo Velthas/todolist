@@ -27,7 +27,7 @@
 
 #sidebar {
     color: #757575;
-    width: 230px;
+    width: 280px;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -72,8 +72,8 @@
 #userProj {
     display: flex;
     justify-content: space-between;
-    width: 170px;
-    align-self: flex-start;
+    width: 180px;
+    align-self: center;
     margin: 20px 0 0 0;
     border-bottom: 1px solid gray;
     padding: 0 10px 8px;
@@ -108,6 +108,10 @@ div#newTask:hover {
     color: #25cd7b;
 }
 
+.userProject.active:hover {
+    border: none;
+}
+
 #list {
     width: -webkit-fill-available;
     display: flex;
@@ -131,14 +135,63 @@ div#newTask:hover {
 
 
 .taskEntry {
-    height: 35px;
     width: -webkit-fill-available;
     margin: 0 5% 2% 5%;
-    background-color: #efeded;
     border-radius: 5px;
+    padding: 6px;
+}
+
+.flex {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.taskDate {
+    color: #25cd7b;
+    margin-right: 10px;
+}
+
+.descriptionHeader {
+    margin: 5px 0 3px 0;
+    font-weight: bold;
+    color: #757575;
+    font-size: 17px;
+}
+
+.taskDescription {
+    color:#757575;
+}
+
+.taskEntry.low,
+.low .infoDescr {
+    background-color: #e8f5e9;
+}
+
+.taskEntry.medium,
+.medium .infoDescr {
+    background-color: #fff3e0;
+}
+
+.taskEntry.high,
+.high .infoDescr {
+    background-color: #ffebee
+}
+
+.taskEntry.completed,
+.taskEntry.completed,
+.taskEntry.completed .infoDescr {
+    background-color: #efefef;
+}
+
+.statusBar img:hover {
+    transform: scale(1.25);
+    transition: filter smooth 0.3s;
+    filter: brightness(0)
+}
+
+.completed p {
+    text-decoration: line-through;
 }
 
 .taskPriority {
@@ -150,6 +203,7 @@ div#newTask:hover {
 .taskEntry img {
     width: 18px;
     height: 18px;
+    cursor: pointer;
 }
 
 .taskEntry .statusBar {

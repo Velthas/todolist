@@ -96,3 +96,82 @@
     <p>Fake Project</p>
     <img src="../src/images/cross-circle.svg"/>
 </div>
+
+//taskList
+<div id="list">
+    <div id="taskHeader">Test</div>
+    <div class="taskContainer">
+        <div id="taskCounter">
+            <p>Tasks (2)</p>
+            <div id="newTask">+</div>
+        </div>
+        <div id="taskList">
+            <div class="taskEntry">
+                <div class="taskPriority">
+                    <img src="../src/images/square.svg">
+                    <p class="taskDescription">I am baby, and I like stuff</p>
+                </div>
+                <div class="statusBar">
+                    <img src="../src/images/info.svg" width="18px" height="18px">
+                    <img src="../src/images/edit.svg" width="18px" height="18px">
+                    <img src="../src/images/cross-circle.svg" width="18px" height="18px">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+//Task Form
+<div id="formBackdrop">
+    <div id="newTaskContainer">
+    <div class="formHeader new">
+        <p class="formTitle">CREATE TASK</p>
+        <p class="formClose">X</p>
+    </div>
+    <div id="projectData">
+        <div class="nameContainer">
+        <label for="taskName" class="label">Task Name:</label>
+        <input type="text" name="taskName" id="taskName" class="text">
+        </div>
+
+        <div class="descriptionContainer">
+                <label for="taskDescr" class= "label">Task Description:</label>
+               <textarea rows="3" col="60" name="taskDescr" id="taskDescr"></textarea>
+        </div>
+
+        <div class="dateContainer">
+                <label for="taskDate" class= "label">Due Date:</label>
+               <input type="date" name="taskDate" value="2022-05-12" id="taskDate">
+        </div>
+
+        <div class="priorityContainer">
+                <label for="taskPriority" class= "label">Task Priority:</label>
+                <select name="taskPriority" id="taskPriority">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+        </div>
+
+        
+        <div class="buttons">
+            <button class="cancel">Cancel</button>
+            <button class="confirm">Create</button>
+        </div>
+    
+    </div>
+</div>
+</div>
+
+//TASK taskEntry
+<div class="taskEntry">
+    <div class="taskPriority">
+        <img src="../src/images/square.svg">
+        <p class="taskDescription">I am baby, and I like stuff</p>
+    </div>
+    <div class="statusBar">
+        <img src="../src/images/info.svg" width="18px" height="18px">
+        <img src="../src/images/edit.svg" width="18px" height="18px">
+        <img src="../src/images/cross-circle.svg" width="18px" height="18px">
+    </div>
+</div>

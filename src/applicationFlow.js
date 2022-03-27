@@ -9,6 +9,7 @@ const applicationFlow = (function () {
         // Extracts the data using the domElement function and uses a factory to create the project object
         const projectInfo = domElements.getProjectData();
         let newEntry = projectData.createProject(projectInfo[0],projectInfo[1]);
+        console.log(newEntry);
         //Pushes new object into projects array
         projectData.addProject(newEntry);
     }
@@ -73,6 +74,17 @@ const applicationFlow = (function () {
                 taskContainer.classList.add('completed')
         }
     }
+    
+    function editTask (taskObject) {
+        //Extract the data from the form
+        const data = domElements.getTaskData();
+        //Change the data of the object
+        taskObject.name = data[0]
+        taskObject.description = data[1]
+        taskObject.date = data[2]
+        taskObject.priority = data[3]
+    }
+
 
     function deleteTask (taskObject, projectObject) {
         //Goes into project data and splices task array
@@ -86,7 +98,7 @@ const applicationFlow = (function () {
         
     }
 
-    return {insertProject, displayProjects, insertTask, deleteTask, generateTaskList, changeCompletedStatus}
+    return {insertProject, displayProjects, insertTask, editTask, deleteTask, generateTaskList, changeCompletedStatus}
 
 })();
 
