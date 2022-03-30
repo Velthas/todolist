@@ -6,7 +6,8 @@ div#formBackdrop {
 }
 
 div#newProjectContainer,
-div#newTaskContainer {
+div#newTaskContainer,
+div#deleteFormContainer {
     position: absolute;
     background-color: rgb(255, 255, 255);
     width: 400px;
@@ -29,6 +30,10 @@ div#newTaskContainer {
     height: 575px;
 }
 
+#deleteFormContainer {
+    height: 200px;
+}
+
 .formHeader {
     display: flex;
     padding: 15px;
@@ -45,6 +50,10 @@ div#newTaskContainer {
 
 .small {
     height: 15%
+}
+
+.smaller {
+    height: 25%
 }
 
 .new {
@@ -141,6 +150,10 @@ p.label {
     padding: 20px 0 0 0;
 }
 
+.pad {
+    padding: 20px 20px 0 0;
+}
+
 button {
     padding: 10px 17px;
     cursor: pointer;
@@ -150,7 +163,8 @@ button {
     transition: .3s;
 }
 
-button.cancel {
+button.cancel,
+button.delcancel {
     background-color: white;
     border: 1px solid #E6E6E6;
 }
@@ -160,12 +174,33 @@ button.cancel:hover {
     color: #25cd7b;
 }
 
+button.delcancel:hover {
+    border: 1px solid #d9263f;
+    color: #d9263f;
+}
+
 button.confirm {
     background-color: #25cd7b;
     color: white;
     border: transparent;
 }
 
+button.confirmDeletion {
+    background-color: #d9263f;
+    color: white;
+    border: transparent;
+}
+
+button.confirmDeletion:hover {
+    background-color: #a11b2d;
+}
+
 button.confirm:hover {
     background-color: #21b36c;
+}
+
+p.formDescription {
+    height: 30%;
+    padding: 13px;
+    font-size: 18px;
 }

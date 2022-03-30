@@ -134,8 +134,7 @@ const domElements = (function () {
         document.querySelector('body').insertBefore(formBackdrop, document.querySelector('#header'));
     }
 
-    //This creates a project div for 
-    //TODO MAKE IT SO CLICKING ON NAME AND IMAGE GENERATES THE TASK LIST, IF YOU CLICK ON DELETE BUTTON IT PROMPTS THE FORM INSTEAD
+    //This creates a project div for a project
     function createProjectDiv (projectObject) {
         //Create main container
         const projectContainer = document.createElement('div');
@@ -154,13 +153,11 @@ const domElements = (function () {
         else projectName.textContent = projectObject.name;
         projectContainer.appendChild(projectName);
 
-        //TODO: ADD FORM TO CONFIRM DELETION, TO AVOID MISTAKES 
         const deleteProjectIcon = document.createElement('img');
         deleteProjectIcon.src = crossIcon;
         projectContainer.appendChild(deleteProjectIcon);
         deleteProjectIcon.addEventListener('click', function () {
-            projectData.deleteProject(projectObject.position);
-            applicationFlow.displayProjects();
+            confirmDeleteForm(projectObject, 'project');
         })
 
         projectName.addEventListener('click', function () {
@@ -176,7 +173,78 @@ const domElements = (function () {
 
         const sidebar = document.querySelector('#userProjList');
         sidebar.appendChild(projectContainer);
-        //TODO: Aggiungi un event listener che mostra il contenuto della task list a destra se clicchi sull'intero div guardando nell'array task dell'oggetto passato tramite callback (vedi factory se nel dubbio)
+    }
+
+    //Displays the delete form for tasks and objects
+    //form refers to what kind of form it is for
+    function confirmDeleteForm (projectObject, form, taskObject) {
+            //Backdrop and main container
+            const formBackdrop = document.createElement('div');
+            formBackdrop.setAttribute('id', 'formBackdrop');
+    
+            const formContainer = document.createElement('div');
+            formContainer.setAttribute('id', 'deleteFormContainer')
+    
+            //Header Elements
+            const formHeader = document.createElement('div');
+            formHeader.setAttribute('class', 'del smaller formHeader')
+
+            //Depending on what you're trying to delete, display different things
+            const formName = document.createElement('p');
+            formName.textContent = form === 'task' ? 'DELETE TASK' : 'DELETE PROJECT'
+            formName.setAttribute('class', 'formTitle');
+    
+            const formX = document.createElement('p');
+            formX.textContent = 'X';
+            formX.setAttribute('class', 'formClose');
+            formX.addEventListener('click', function () { deleteForm(formBackdrop) })
+    
+            formHeader.appendChild(formName);
+            formHeader.appendChild(formX);
+    
+            formContainer.appendChild(formHeader)
+    
+            //Description of what is about to be done
+            const warningPara = document.createElement('p');
+            warningPara.classList.add('formDescription');
+            warningPara.textContent = form === 'task' ? "Deleted tasks can never be retrieved. Knowing this, do you still wish to proceed?" : "Deleted projects can never be retrieved. Knowing this, do you still wish to proceed?" 
+            formContainer.appendChild(warningPara);
+    
+            //Buttons to confirm and cancel
+            const btnContainer = document.createElement('div');
+            btnContainer.setAttribute('class', 'buttons pad');
+    
+            const cancelBtn = document.createElement('button');
+            cancelBtn.classList.add('delcancel');
+            cancelBtn.textContent = 'Cancel';
+            btnContainer.appendChild(cancelBtn);
+            cancelBtn.addEventListener('click', function () { deleteForm(formBackdrop) })
+    
+            const confirmBtn = document.createElement('button');
+            confirmBtn.classList.add('confirmDeletion');
+            confirmBtn.textContent = 'Confirm';
+            btnContainer.appendChild(confirmBtn);
+            
+            //Depending on what you're trying to delete, either deletes the task and redisplays the task list or the same but with projects
+            confirmBtn.addEventListener('click', function () {
+                if(form === 'task') {
+                    applicationFlow.deleteTask(taskObject, projectObject);
+                    applicationFlow.displayProjects();
+                    deleteForm(formBackdrop);
+                }
+                else {
+                    projectData.deleteProject(projectObject.position);
+                    applicationFlow.displayProjects();
+                    deleteForm(formBackdrop);
+                }
+            })
+            
+            
+            formContainer.appendChild(btnContainer);
+    
+            //Now append everything to make it appear
+            formBackdrop.appendChild(formContainer);
+            document.querySelector('body').insertBefore(formBackdrop, document.querySelector('#header'));
     }
 
     //Function to dinamically create the form for new tasks.
@@ -598,7 +666,7 @@ const domElements = (function () {
         const delImg = document.createElement('img');
         delImg.src = crossIcon;
         delImg.addEventListener('click', function () { 
-            applicationFlow.deleteTask(taskObject, projectObject);
+            confirmDeleteForm(projectObject, 'task', taskObject);
         })
         statusBar.appendChild(delImg);
 
