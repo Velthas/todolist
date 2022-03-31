@@ -1,6 +1,8 @@
 import projectData from './index.js'
 import applicationFlow from './applicationFlow.js'
 
+import format from 'date-fns/format'
+
 //This is a cross icon for deletion
 import crossIcon from './images/cross-circle.svg'
 
@@ -615,7 +617,7 @@ const domElements = (function () {
         //TODO: SEE IF YOU CAN USE THAT LIBRARY TO FORMAT THIS DATE INTO A MORE HUMAN FORM
         const datePara = document.createElement('p');
         datePara.classList.add('datePara');
-        datePara.textContent = taskObject.date;
+        datePara.textContent = format(new Date(taskObject.date), 'dd-MM-yyyy');
         statusBar.appendChild(datePara);
 
         //Button to check project info

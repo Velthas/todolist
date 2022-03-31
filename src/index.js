@@ -11,7 +11,7 @@ import book from './images/book-alt.svg'
 
 //Modules
 import domElements from './domElements.js'
-import applicationFlow from './applicationFlow.js'
+
 
 //This IIFE is where all the data about projects is segregated, and using closures one can only interact with the arrays through the exported functions
 const projectData = (function () {
