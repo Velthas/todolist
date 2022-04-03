@@ -131,6 +131,43 @@ const defaultProjects = (function () {
         }
     } 
 
+    function clearStandardProjects () {
+        home.tasks = [];
+        today.tasks =  [];
+        urgent.tasks = [];
+    }
+
+    function bindEventListeners() {
+        const homeDiv = document.querySelector('#home');
+        const todayDiv = document.querySelector('#today');
+        const urgentDiv = document.querySelector('#urgent');
+
+        homeDiv.addEventListener('click', function () {
+            clearStandardProjects();
+            populateStandardProjects();
+            domElements.showProjectInterface(home);
+            domElements.deleteAddProjectIcon();
+        })
+
+        todayDiv.addEventListener('click', function () {
+            clearStandardProjects();
+            populateStandardProjects();
+            domElements.showProjectInterface(today);
+            domElements.deleteAddProjectIcon();
+        })
+
+        urgentDiv.addEventListener('click', function () {
+            clearStandardProjects();
+            populateStandardProjects();
+            domElements.showProjectInterface(urgent);
+            domElements.deleteAddProjectIcon();
+        })
+
+
+    }
+
+    bindEventListeners();
+    
 })();
 
 export default projectData;

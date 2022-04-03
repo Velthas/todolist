@@ -816,8 +816,8 @@ const domElements = (function () {
 
     //This removes the add project icon 
     function deleteAddProjectIcon () {
-       addProjectIcon = document.querySelector('#newTask');
-       addProjectIcon.remove();
+        const addProjectIcon = document.querySelector('#newTask');
+        addProjectIcon.remove();
     }
 
     //Toggles active class for projects 
