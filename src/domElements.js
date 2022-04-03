@@ -1,7 +1,8 @@
 import projectData from './index.js'
 import applicationFlow from './applicationFlow.js'
 
-import format from 'date-fns/format'
+//Import from date-fns
+import {format} from 'date-fns'
 
 //This is a cross icon for deletion
 import crossIcon from './images/cross-circle.svg'
@@ -172,7 +173,6 @@ const domElements = (function () {
             showProjectInterface(projectObject);
         })
 
-
         const sidebar = document.querySelector('#userProjList');
         sidebar.appendChild(projectContainer);
     }
@@ -237,6 +237,7 @@ const domElements = (function () {
                 else {
                     projectData.deleteProject(projectObject.position);
                     applicationFlow.displayProjects();
+                    emptyList();
                     deleteForm(formBackdrop);
                 }
             })
@@ -572,7 +573,7 @@ const domElements = (function () {
     }
 
     //Creates a div for a task;
-    function createTaskDiv(taskObject, projectObject) {
+    function createTaskDiv(taskObject) {
         const taskEntry = document.createElement('div');
         taskEntry.classList.add('taskEntry');
 
@@ -661,14 +662,14 @@ const domElements = (function () {
         const editImg = document.createElement('img');
         editImg.src = editIcon;
         editImg.addEventListener('click', function () {
-            editTaskForm(projectObject, taskObject);
+            editTaskForm(taskObject);
         })
-        statusBar.appendChild(editImg)
+        statusBar.appendChild(editImg);
 
         const delImg = document.createElement('img');
         delImg.src = crossIcon;
         delImg.addEventListener('click', function () { 
-            confirmDeleteForm(projectObject, 'task', taskObject);
+            confirmDeleteForm(projectData.returnProject(taskObject.projectIndex),'task', taskObject);
         })
         statusBar.appendChild(delImg);
 
@@ -787,7 +788,7 @@ const domElements = (function () {
         list.appendChild(taskContainer);
         document.querySelector('#main').appendChild(list);
 
-        //TODO CREATE A FUNCTION THAT CAN RENDER THE TASK LIST
+        //Generates the task list by looking at the task array in the project object
         applicationFlow.generateTaskList(projectObject);
 
     }
@@ -802,17 +803,22 @@ const domElements = (function () {
     //Elsewise all divs will be doubled on each insertion or deletion
     function deleteGeneratedDivs (selector) {
         
-        //If this is null, then this is the first project and there is no need to delete anything
+        //If this is null, then this is the first user generated div and there is no need to delete anything
         const firstDiv = document.querySelector(selector);
         if (firstDiv === null) return;
 
-        //Creates a node list with all the user projects
+        //Creates an array of nodes with all the user projects/tasks
         const allDivs = Array.from(document.querySelectorAll(selector));
 
         //Iterates over all of the nodes and deletes each one
         allDivs.forEach(projectDiv => projectDiv.remove());
     }
 
+    //This removes the add project icon 
+    function deleteAddProjectIcon () {
+       addProjectIcon = document.querySelector('#newTask');
+       addProjectIcon.remove();
+    }
 
     //Toggles active class for projects 
     function setActive (projectContainer) {
@@ -829,9 +835,13 @@ const domElements = (function () {
         
     }
 
+    function emptyList() {
+        document.querySelector('#list').textContent = ""
+    }
+
     bindEventListeners();
 
-    return {createProjectForm, getProjectData, createProjectDiv, createTaskDiv, showProjectInterface, deleteGeneratedDivs, getTaskData}
+    return {createProjectForm, getProjectData, createProjectDiv, createTaskDiv, showProjectInterface, deleteGeneratedDivs, getTaskData, emptyList, deleteAddProjectIcon}
 
 })();
 

@@ -20,8 +20,10 @@ const applicationFlow = (function () {
         const taskInfo = domElements.getTaskData();
         //Uses a factory to create the task
         let newTask = projectData.createTask(taskInfo[0], taskInfo[1], taskInfo[2], taskInfo[3])
+        //Assigns the task the position of its project so it can be retrieved later for deletion
+        newTask.projectIndex = projectObject.position;
         //Looks into the array of projects in the given position and appends the new task to the task array
-        projectData.addTask(projectObject.position, newTask);
+        projectData.addTask(newTask.projectIndex, newTask);
         //Updates the number of tasks on the list
         const noOfTasks = document.querySelector('#taskCounter p');
         let number = (Number(noOfTasks.textContent.split(' ')[0])) + 1;
@@ -54,10 +56,12 @@ const applicationFlow = (function () {
         for (let i = 0; i < length; i++) {
             //Get the task from the tasks array within the project
             const taskObject = projectObject.tasks[i];
-            taskObject.position = i;
+            //This fixes a problem with standard projects, since they naturally possess no position attribute and that is exclusive to user generated projects
+            taskObject.projectIndex = projectObject.standard === true ? taskObject.projectIndex : projectObject.position;
+            taskObject.taskIndex = i;
             console.log(taskObject);
 
-            domElements.createTaskDiv(taskObject, projectObject)
+            domElements.createTaskDiv(taskObject)
         }
 
     }
@@ -83,20 +87,26 @@ const applicationFlow = (function () {
         taskObject.description = data[1]
         taskObject.date = data[2]
         taskObject.priority = data[3]
+
+        projectData.replaceEditedTask(taskObject);
     }
 
 
     function deleteTask (taskObject, projectObject) {
+
         //Goes into project data and splices task array
-        projectData.removeTask(projectObject.position, taskObject.position);
+        projectData.removeTask(taskObject.projectIndex, taskObject.taskIndex);
+
         //Regenerate task divs without the deleted one
         generateTaskList(projectObject);
+
         //Updates the number of tasks on the list
         const noOfTasks = document.querySelector('#taskCounter p');
         let number = (Number(noOfTasks.textContent.split(' ')[0])) - 1;
         noOfTasks.textContent = number + " Task(s)";
         
     }
+
 
     return {insertProject, displayProjects, insertTask, editTask, deleteTask, generateTaskList, changeCompletedStatus}
 
