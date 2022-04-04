@@ -406,7 +406,7 @@ const domElements = (function () {
 
     }
 
-    function editTaskForm (projectObject, taskObject) {
+    function editTaskForm (taskObject) {
         //Backdrop and main container
         const formBackdrop = document.createElement('div');
         formBackdrop.setAttribute('id', 'formBackdrop');
@@ -556,7 +556,7 @@ const domElements = (function () {
 
         confirmBtn.addEventListener('click', function () {
             applicationFlow.editTask(taskObject);
-            applicationFlow.generateTaskList(projectObject);
+            applicationFlow.generateTaskList(projectData.returnProject(taskObject.projectIndex));
             deleteForm(formBackdrop);
         })
         
@@ -841,7 +841,7 @@ const domElements = (function () {
 
     bindEventListeners();
 
-    return {createProjectForm, getProjectData, createProjectDiv, createTaskDiv, showProjectInterface, deleteGeneratedDivs, getTaskData, emptyList, deleteAddProjectIcon}
+    return {createProjectForm, getProjectData, createProjectDiv, createTaskDiv, showProjectInterface, deleteGeneratedDivs, getTaskData, emptyList, deleteAddProjectIcon, setActive}
 
 })();
 

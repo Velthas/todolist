@@ -147,6 +147,7 @@ const defaultProjects = (function () {
             populateStandardProjects();
             domElements.showProjectInterface(home);
             domElements.deleteAddProjectIcon();
+            domElements.setActive(homeDiv);
         })
 
         todayDiv.addEventListener('click', function () {
@@ -154,6 +155,7 @@ const defaultProjects = (function () {
             populateStandardProjects();
             domElements.showProjectInterface(today);
             domElements.deleteAddProjectIcon();
+            domElements.setActive(todayDiv);
         })
 
         urgentDiv.addEventListener('click', function () {
@@ -161,6 +163,7 @@ const defaultProjects = (function () {
             populateStandardProjects();
             domElements.showProjectInterface(urgent);
             domElements.deleteAddProjectIcon();
+            domElements.setActive(urgentDiv);
         })
 
 

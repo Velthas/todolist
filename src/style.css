@@ -80,6 +80,18 @@
     font-size: 18px;
 }
 
+#home,
+#today,
+#urgent {
+    gap: 35px;
+    justify-content: flex-start;
+}
+
+.project.active:hover {
+  border: none;  
+}
+
+
 div#userProjList {
     gap: 3px;
     display: flex;
