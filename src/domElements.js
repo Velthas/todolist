@@ -159,7 +159,7 @@ const domElements = (function () {
         projectContainer.appendChild(projectName);
 
         const deleteProjectIcon = document.createElement('img');
-        deleteProjectIcon.src = crossIcon;
+        deleteProjectIcon.src = blackCrossIcon;
         projectContainer.appendChild(deleteProjectIcon);
         deleteProjectIcon.addEventListener('click', function () {
             confirmDeleteForm(projectObject, 'project');
