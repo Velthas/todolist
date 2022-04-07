@@ -170,6 +170,20 @@ const defaultProjects = (function () {
 
     }
 
+    //Standard project images don't load if put into the html itself, so I just do it manually from here
+    function addImages () {
+       const homeImg = document.querySelector('#home img');
+       homeImg.src = homeIcon;
+
+        const urgentImg = document.querySelector('#urgent img');
+        urgentImg.src = urgentIcon;
+
+        const todayImg = document.querySelector('#today img');
+        todayImg.src = todayIcon;
+
+    }
+
+    addImages();
     bindEventListeners();
     
 })();
