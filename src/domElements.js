@@ -6,6 +6,7 @@ import {format} from 'date-fns'
 
 //This is a cross icon for deletion
 import crossIcon from './images/cross-circle.svg'
+import blackCrossIcon from './images/cross-circle-black.svg'
 
 //These icons are needed for the task divs
 import squareIcon from './images/square.svg'
@@ -149,6 +150,7 @@ const domElements = (function () {
 
         //Make sure to check if the name is longer and if it is, cut it.
         //It will be displayed in full in the project interface
+        //TODO: To implement future 
         const projectName = document.createElement('p');
         if (projectObject.name.length > 7) {
             projectName.textContent = projectObject.name.slice(0, 6) + '...';

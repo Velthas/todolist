@@ -1,6 +1,7 @@
 //Importing style sheets
 import './style.css';
 import './projectForm.css';
+import './mediaQueries.css';
 
 //This is for project icons
 import star from './images/star.svg'

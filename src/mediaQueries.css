@@ -1,0 +1,42 @@
+@media screen and (max-width: 700px) {
+    #header {
+        justify-content: center;
+        height: 8vh;
+    }
+
+    #main {
+        flex-direction: column;
+        height: 80vh;
+        gap: 5%;
+    }
+
+    #sidebar {
+        width: 100vw;
+        height: 45vh;
+        padding: 16px;
+    }
+
+    #list {
+        height: 80vh;
+        border-top: 1px solid rgba(197, 190, 190, 0.616);
+
+    }
+
+    .project img, .userProject img {
+        filter: none;
+    }
+
+    div#newTaskContainer {
+        width: 350px;
+    }
+
+    div#newProjectContainer {
+        width: 370px;
+    }
+    div#deleteFormContainer {
+        width: 340px;
+    }
+    .statusBar img:hover {
+        filter: none;
+    }
+}
