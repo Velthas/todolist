@@ -18,7 +18,7 @@ import urgentIcon from './images/engine-warning.svg'
 //Modules
 import domElements from './domElements.js'
 import { isToday } from 'date-fns';
-import applicationFlow from './applicationFlow';
+import applicationFlow from './applicationFlow.js';
 
 
 //This IIFE is where all the data about user projects is segregated, and using closures one can only interact with the arrays through the exported functions
@@ -27,7 +27,7 @@ const projectData = (function () {
     //Array with icon urls
     const icons = [star, cards, shopping, heart, book]
     //The one array with projects
-    const projects = [];
+    let projects = [];
 
     //Factory functions to create projects
     function createProject (name, icon) {
@@ -71,20 +71,33 @@ const projectData = (function () {
         projects.splice(position, 1);
     }
 
+    //Adds new task to the project at the specified index
     function addTask(index, newTask) {
         projects[index].tasks.push(newTask);
     }
 
+    //Removes a task by looking at the tasks array of a project and splicing the array
     function removeTask(objectIndex, taskIndex) {
         projects[objectIndex].tasks.splice(taskIndex, 1);
     }
 
-
+    //After a task is edited, the old one is replaced with the new one
     function replaceEditedTask(task) {
         projects[task.projectIndex].tasks[task.taskIndex] = task;
     }
 
-    return {extractIcon, createProject, createTask, addProject, addTask, removeTask, returnArrayLength, returnProject, deleteProject, replaceEditedTask}
+    //This returns the project array for storing in localstorage
+    function returnProjectsArray() {
+        return projects;
+    }
+
+    //If a copy of the projects exist in storage, then copy it to replace the empty projects array
+    //When the page first loads
+    function updateFromLocalStorage(storedProjects) {
+        projects = storedProjects;  
+    }
+
+    return {extractIcon, createProject, createTask, addProject, addTask, removeTask, returnArrayLength, returnProject, deleteProject, replaceEditedTask, returnProjectsArray, updateFromLocalStorage}
 
 })(); 
 
@@ -120,14 +133,8 @@ const defaultProjects = (function () {
                 home.tasks.push(task);
 
                 //Not using break statements here because a task might be in different standard projects
-                switch (true) {
-                    //If it's urgent, store it into the urgent standard project
-                    case (task.priority === 'high'):
-                        urgent.tasks.push(task);
-                    //If it's today, store it into the today standard project
-                    case (isToday(new Date(task.date))):
-                        today.tasks.push(task);
-                }
+                if(task.priority === 'high') urgent.tasks.push(task);
+                if(isToday(new Date(task.date))) today.tasks.push(task);
             }
         }
     } 
@@ -188,4 +195,33 @@ const defaultProjects = (function () {
     
 })();
 
-export default projectData;
+const localStorageFunctions = (function () {
+
+    //Check if the projects array is already in local storage on page load
+    //If it isn't, add it through setItem.
+    if (!localStorage.getItem('projects')) {
+
+        updateStoredProjects();
+         
+    } else {
+        //If projects are in storage, parse the stringified array using the JSON function parse
+        const storedProjects = JSON.parse(localStorage.getItem('projects'));
+        //This function replaces the empty array with the parsed one
+        projectData.updateFromLocalStorage(storedProjects);
+        applicationFlow.displayProjects()
+    }
+
+    //Retrieves a copy of stored projects, stringifies them and stores them in localstorage.
+    function updateStoredProjects() {
+        //First get a copy of the array from projectData
+        const array = projectData.returnProjectsArray()
+        //Then stringify the array using the JSON function for storage.
+        //Objects and functions must be converted to string to store in json format
+        localStorage.setItem('projects', JSON.stringify(array));
+    }
+
+    return {updateStoredProjects}
+})();
+
+export {projectData};
+export {localStorageFunctions}

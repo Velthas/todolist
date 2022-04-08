@@ -1,5 +1,6 @@
 import domElements from "./domElements";
-import projectData from "./index.js"
+import {projectData} from "./index.js"
+import {localStorageFunctions} from "./index.js"
 
 //This is what directs the flow of the application, from appending projects to displaying them and deleting them.
 const applicationFlow = (function () {
@@ -12,6 +13,9 @@ const applicationFlow = (function () {
         console.log(newEntry);
         //Pushes new object into projects array
         projectData.addProject(newEntry);
+
+        //This updates localStorage upon project insertion
+        localStorageFunctions.updateStoredProjects();
     }
 
     //This looks into the appropriate project and adds the task
@@ -28,14 +32,14 @@ const applicationFlow = (function () {
         const noOfTasks = document.querySelector('#taskCounter p');
         let number = (Number(noOfTasks.textContent.split(' ')[0])) + 1;
         noOfTasks.textContent = number + " Task(s)";
+
+        //This updates the local storage upon task insertion
+        localStorageFunctions.updateStoredProjects();
     }
 
     //This creates divs for all the projects in the sidebar, to be used each time a project is added or deleted
     function displayProjects () {
         //Always delete all the project divs before reappending them to avoid repetition
-        //TODO: NOT REALLY IMPORTANT, BUT SEE IF YOU CAN ADD A WAY OF RETAINING WHICH PROJECT WAS ACTIVE
-        //Current idea is, give the active object a property of active with a boolean value, only one can have the property at the time so each time a div is clicked you turn it off for everyone else except the one
-        //This way you can retain and always find out which project was active before any other action was performed
         domElements.deleteGeneratedDivs('.userProject');
         let length = projectData.returnArrayLength();
         for (let i = 0; i < length; i++) {
@@ -46,7 +50,6 @@ const applicationFlow = (function () {
             //This creates the project div and adds the relevant event listeners
             //Important, this is what enables the task list to be displayed
             domElements.createProjectDiv(projectObject);
-
         }
     }
 
@@ -89,6 +92,9 @@ const applicationFlow = (function () {
         taskObject.priority = data[3]
 
         projectData.replaceEditedTask(taskObject);
+
+        //Update the local storage of the project array when a task is edited
+        localStorageFunctions.updateStoredProjects();
     }
 
 
@@ -104,6 +110,9 @@ const applicationFlow = (function () {
         const noOfTasks = document.querySelector('#taskCounter p');
         let number = (Number(noOfTasks.textContent.split(' ')[0])) - 1;
         noOfTasks.textContent = number + " Task(s)";
+
+        //Update the local storage when a task is deleted
+        localStorageFunctions.updateStoredProjects();
         
     }
 

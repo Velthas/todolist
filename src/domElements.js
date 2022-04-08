@@ -1,4 +1,4 @@
-import projectData from './index.js'
+import {projectData} from './index.js'
 import applicationFlow from './applicationFlow.js'
 
 //Import from date-fns
