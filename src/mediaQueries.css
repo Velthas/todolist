@@ -6,19 +6,22 @@
 
     #main {
         flex-direction: column;
-        height: 80vh;
+        padding-bottom: 16px;
         gap: 5%;
+        height: fit-content;
     }
 
     #sidebar {
         width: 100vw;
-        height: 45vh;
-        padding: 16px;
+        padding-bottom: 16px;
+        overflow-y: initial;
     }
 
     #list {
-        height: 80vh;
         border-top: 1px solid rgba(197, 190, 190, 0.616);
+        overflow-y: initial;
+        height: fit-content;
+        padding-bottom: 16px;
 
     }
 
