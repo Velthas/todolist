@@ -10,7 +10,6 @@ const applicationFlow = (function () {
         // Extracts the data using the domElement function and uses a factory to create the project object
         const projectInfo = domElements.getProjectData();
         let newEntry = projectData.createProject(projectInfo[0],projectInfo[1]);
-        console.log(newEntry);
         //Pushes new object into projects array
         projectData.addProject(newEntry);
 
@@ -62,7 +61,6 @@ const applicationFlow = (function () {
             //This fixes a problem with standard projects, since they naturally possess no position attribute and that is exclusive to user generated projects
             taskObject.projectIndex = projectObject.standard === true ? taskObject.projectIndex : projectObject.position;
             taskObject.taskIndex = i;
-            console.log(taskObject);
 
             domElements.createTaskDiv(taskObject)
         }
