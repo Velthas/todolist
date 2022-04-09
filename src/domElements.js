@@ -1,4 +1,5 @@
 import {projectData} from './index.js'
+import {localStorageFunctions} from './index.js'
 import applicationFlow from './applicationFlow.js'
 
 //Import from date-fns
@@ -143,6 +144,7 @@ const domElements = (function () {
         //Create main container
         const projectContainer = document.createElement('div');
         projectContainer.classList.add('userProject');
+        projectContainer.setAttribute('title', `${projectObject.name}`);
 
         const projectIcon = document.createElement('img');
         projectIcon.src = projectObject.icon;
@@ -150,7 +152,6 @@ const domElements = (function () {
 
         //Make sure to check if the name is longer and if it is, cut it.
         //It will be displayed in full in the project interface
-        //TODO: To implement future 
         const projectName = document.createElement('p');
         if (projectObject.name.length > 7) {
             projectName.textContent = projectObject.name.slice(0, 6) + '...';
@@ -605,6 +606,7 @@ const domElements = (function () {
         completedImg.addEventListener('click', function () {
             applicationFlow.changeCompletedStatus(taskObject, taskEntry);
             completedImg.src = taskObject.completed === true ? checkIcon : squareIcon
+            localStorageFunctions.updateStoredProjects();
         })
 
         const nameParagraph = document.createElement('p');
@@ -617,7 +619,6 @@ const domElements = (function () {
         const statusBar = document.createElement('div');
         statusBar.classList.add('statusBar');
 
-        //TODO: SEE IF YOU CAN USE THAT LIBRARY TO FORMAT THIS DATE INTO A MORE HUMAN FORM
         const datePara = document.createElement('p');
         datePara.classList.add('datePara');
         datePara.textContent = format(new Date(taskObject.date), 'dd-MM-yyyy');
@@ -643,6 +644,17 @@ const domElements = (function () {
                 const infoDescr = document.createElement('div');
                 infoDescr.classList.add('infoDescr');
 
+                //This paragraph helps user keep track of what project the task belongs to
+                const projectNameHeader = document.createElement('p');
+                projectNameHeader.textContent = 'Project:';
+                projectNameHeader.classList.add('descriptionHeader');
+                infoDescr.appendChild(projectNameHeader)
+
+                const projectName = document.createElement('p');
+                projectName.textContent = `${projectData.returnProject(taskObject.projectIndex).name}`;
+                projectName.classList.add('taskDescription');
+                infoDescr.appendChild(projectName);
+
                 //This will add a paragraph with the description
                 const descriptionHeader = document.createElement('p');
                 descriptionHeader.classList.add('descriptionHeader');
@@ -653,6 +665,16 @@ const domElements = (function () {
                 taskDescription.textContent = taskObject.description;
                 taskDescription.classList.add('taskDescription');
                 infoDescr.appendChild(taskDescription);
+
+                //If there is no description, just don't show it
+                if (taskObject.description === "") {
+                    taskDescription.setAttribute('style', 'display:none;')
+                    descriptionHeader.setAttribute('style', 'display:none;')
+                }
+                else {
+                    taskDescription.style = "";
+                    descriptionHeader.style = "";
+                }
 
                 taskEntry.appendChild(infoDescr);
             }

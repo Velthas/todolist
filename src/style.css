@@ -135,7 +135,7 @@ div#newTask:hover {
 
 #taskHeader {
     align-self: center;
-    margin-top: 5%;
+    margin: 5% 0;
     font-size: xx-large;
 }
 
@@ -147,9 +147,9 @@ div#newTask:hover {
     justify-content: space-between;
 }
 
-
 .taskEntry {
-    width: -webkit-fill-available;
+    min-width: -webkit-fill-available;
+    width: min-content;
     margin: 0 5% 2% 5%;
     border-radius: 5px;
     padding: 6px;
@@ -167,7 +167,7 @@ div#newTask:hover {
 }
 
 .descriptionHeader {
-    margin: 5px 0 3px 0;
+    margin: 9px 0 3px 0;
     font-weight: bold;
     color: #757575;
     font-size: 17px;
