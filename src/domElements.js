@@ -391,6 +391,10 @@ const domElements = (function () {
         
         //I NEED TO CREATE THE FUNCTION TO ADD A TASK TO THE PROJECT ARRAY
         confirmBtn.addEventListener('click', function () {
+            if(document.querySelector('#taskDate').value === "") {
+                alert('Invalid date, please try again');
+                return;
+            }
             applicationFlow.insertTask(projectObject);
             applicationFlow.generateTaskList(projectObject);
             deleteForm(formBackdrop);
@@ -558,6 +562,10 @@ const domElements = (function () {
         
 
         confirmBtn.addEventListener('click', function () {
+            if(document.querySelector('#taskDate').value === "") {
+                alert('Invalid date, please try again');
+                return;
+            }
             applicationFlow.editTask(taskObject);
             applicationFlow.generateTaskList(projectData.returnProject(taskObject.projectIndex));
             deleteForm(formBackdrop);
@@ -722,7 +730,6 @@ const domElements = (function () {
         //Get all the information
         let taskName = form.querySelector('#taskName').value;
         let taskDescr = form.querySelector('#taskDescr').value;
-        //TODO: SEE IF YOU CAN USE THAT LIBRARY FOR DATE FORMATTING
         let taskDate = form.querySelector('#taskDate').value;
         let taskPriority = form.querySelector('#taskPriority').value;
 
