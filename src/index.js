@@ -54,7 +54,6 @@ const projectData = (function () {
       date,
       priority,
       completed: false,
-
     };
   }
 

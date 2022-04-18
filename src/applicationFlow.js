@@ -21,14 +21,19 @@ const applicationFlow = (function () {
     // Extract the data of the task into an array
     const taskInfo = domElements.getTaskData();
     // Uses a factory to create the task
-    const newTask = projectData.createTask(taskInfo[0], taskInfo[1], taskInfo[2], taskInfo[3]);
+    const newTask = projectData.createTask(
+      taskInfo[0],
+      taskInfo[1],
+      taskInfo[2],
+      taskInfo[3]
+    );
     // Assigns the task the position of its project so it can be retrieved later for deletion
     newTask.projectIndex = projectObject.position;
     // Append the task to the appropriate project
     projectData.addTask(newTask.projectIndex, newTask);
     // Updates the number of tasks on the list
     const noOfTasks = document.querySelector('#taskCounter p');
-    const number = (Number(noOfTasks.textContent.split(' ')[0])) + 1;
+    const number = Number(noOfTasks.textContent.split(' ')[0]) + 1;
     noOfTasks.textContent = number + ' Task(s)';
 
     // This updates the local storage upon task insertion
@@ -61,7 +66,10 @@ const applicationFlow = (function () {
       // Standard projects do not have a natural position attribute
       // And we still need a way to find the original project of the task
       // eslint-disable-next-line max-len
-      taskObject.projectIndex = projectObject.standard === true ? taskObject.projectIndex : projectObject.position;
+      taskObject.projectIndex =
+        projectObject.standard === true
+          ? taskObject.projectIndex
+          : projectObject.position;
       taskObject.taskIndex = i;
 
       domElements.createTaskDiv(taskObject);
@@ -72,12 +80,12 @@ const applicationFlow = (function () {
   function changeCompletedStatus(taskObject, taskContainer) {
     // eslint-disable-next-line default-case
     switch (true) {
-      case (taskObject.completed === true):
+      case taskObject.completed === true:
         // eslint-disable-next-line no-param-reassign
         taskObject.completed = false;
         taskContainer.classList.remove('completed');
         break;
-      case (taskObject.completed === false):
+      case taskObject.completed === false:
         // eslint-disable-next-line no-param-reassign
         taskObject.completed = true;
         taskContainer.classList.add('completed');
@@ -108,7 +116,7 @@ const applicationFlow = (function () {
 
     // Updates the number of tasks on the list
     const noOfTasks = document.querySelector('#taskCounter p');
-    const number = (Number(noOfTasks.textContent.split(' ')[0])) - 1;
+    const number = Number(noOfTasks.textContent.split(' ')[0]) - 1;
     noOfTasks.textContent = number + ' Task(s)';
 
     // Update the local storage when a task is deleted
