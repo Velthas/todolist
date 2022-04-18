@@ -36,7 +36,4 @@ Standard projects are populated by looking at all the tasks within the projects 
 + **Webpack**: I love how versatile this tool is proving to be, and am enjoying more and more splitting my code into modules to keep it well organized. For the future, it might be worth looking into new things I can add to my webpack toolkit. 
 + **date-fns**: This is the first time I purposefully used a library, aside from those imported in C during CS50. Date-fns is amazing to work with dates, and it allowed me to both format dates to european standards and run some checks for standard projects.
 + **localStorage**: I learned about local storage and session storage, meaning I could finally make my application remember and store projects even when the page is refreshed. This was not without error, as I had to deal with my objects not being saved properly, which led me to learning about JSON and the need for stringification when storing objects. I imagine this is not as safe as using an actual database, but I am still happy The Odin Project pushed me this way.
-
-
-
-
++ **Linting**: After continuing the javascript path on The Odin Project, I was introduced to code linting and ESlint, so I had to try it for myself. I used the AirBnB style guide, and this time around went through the errors manually to ensure I understood where I went wrong. Needless to say, I think this was a great exercise and I am looking forward to using this tool again for my future projects
