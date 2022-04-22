@@ -70,7 +70,9 @@ const applicationFlow = (function () {
         projectObject.standard === true
           ? taskObject.projectIndex
           : projectObject.position;
-      taskObject.taskIndex = i;
+      // Standard projects have a skewed taskIndex value because it holds info from different projects
+      taskObject.taskIndex =
+        projectObject.standard === true ? taskObject.taskIndex : i;
 
       domElements.createTaskDiv(taskObject);
     }
@@ -112,12 +114,9 @@ const applicationFlow = (function () {
     projectData.removeTask(taskObject.projectIndex, taskObject.taskIndex);
 
     // Regenerate task divs without the deleted one
-    generateTaskList(projectObject);
-
-    // Updates the number of tasks on the list
-    const noOfTasks = document.querySelector('#taskCounter p');
-    const number = Number(noOfTasks.textContent.split(' ')[0]) - 1;
-    noOfTasks.textContent = number + ' Task(s)';
+    const activeProject = document.querySelector('.active');
+    if (activeProject !== null) activeProject.click();
+    else domElements.showProjectInterface(projectObject);
 
     // Update the local storage when a task is deleted
     localStorageFunctions.updateStoredProjects();
