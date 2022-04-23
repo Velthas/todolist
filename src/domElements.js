@@ -580,7 +580,7 @@ const domElements = (function () {
 
       applicationFlow.editTask(taskObject);
       // Regenerate task divs without the deleted one
-      const activeProject = document.querySelector('.active');
+      const activeProject = document.querySelector('.active p');
       if (activeProject !== null) activeProject.click();
       else domElements.showProjectInterface(projectObject);
 
