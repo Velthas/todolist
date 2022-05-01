@@ -16,6 +16,8 @@ import checkIcon from './images/check.svg';
 import infoIcon from './images/info.svg';
 import greenInfoIcon from './images/greeninfo.svg';
 import editIcon from './images/edit.svg';
+import angleUp from './images/angle-up.svg'
+import angleDown from './images/angle-down.svg'
 
 // eslint-disable-next-line wrap-iife
 const domElements = (function () {
@@ -145,6 +147,8 @@ const domElements = (function () {
     // Create main container
     const projectContainer = document.createElement('div');
     projectContainer.classList.add('userProject');
+    //This makes it so hovering over a project displays the full name
+    //Useful when project name is cut in half
     projectContainer.setAttribute('title', `${projectObject.name}`);
 
     const projectIcon = document.createElement('img');
@@ -621,10 +625,40 @@ const domElements = (function () {
       taskEntry.classList.add('completed');
     }
 
-    // Container for task priority and task name
+    // Container for task priority, task name, and task moving arrows
     const taskPriority = document.createElement('div');
     taskPriority.classList.add('taskPriority');
     taskEntry.appendChild(taskPriority);
+
+    // Icons to move task order
+    // TODO: REMEMBER TO ADD FUNCTIONALITY TO DISABLE THIS ON THE STANDARD PROJECTS
+    const arrowContainer = document.createElement('div');
+    arrowContainer.setAttribute('class','flex-column arrowContainer');
+
+    const moveUpIcon = document.createElement('img');
+    moveUpIcon.src = angleUp;
+    moveUpIcon.alt = "This arrow is used to move a task up the list"
+    moveUpIcon.classList.add('arrows');
+    
+    moveUpIcon.addEventListener('click', function () { 
+      applicationFlow.moveTask('up', taskObject);
+      applicationFlow.generateTaskList(projectData.returnProject(taskObject.projectIndex));
+    } )
+
+    const moveDownIcon = document.createElement('img');
+    moveDownIcon.src = angleDown;
+    moveDownIcon.alt = "This arrow is used to move a task down the list"
+    moveDownIcon.classList.add('arrows');
+
+    moveDownIcon.addEventListener('click', function () {
+      applicationFlow.moveTask('down', taskObject);
+      applicationFlow.generateTaskList(projectData.returnProject(taskObject.projectIndex));
+      
+    })
+
+    arrowContainer.appendChild(moveUpIcon);
+    arrowContainer.appendChild(moveDownIcon);
+    taskPriority.appendChild(arrowContainer);
 
     const completedImg = document.createElement('img');
     completedImg.src = taskObject.completed === true ? checkIcon : squareIcon;
@@ -884,6 +918,15 @@ const domElements = (function () {
     document.querySelector('#list').textContent = '';
   }
 
+  // This function is to be used in standard projects
+  // Since arrow functionality is exclusive to user created projects
+  // Remove them when this function is invoked (in index.js)
+  function removeArrows() {
+    const allArrowsContainers = document.querySelectorAll('.arrowContainer');
+    allArrowsContainers.forEach((arrows) => arrows.remove());
+
+  }
+
   bindEventListeners();
 
   return {
@@ -897,6 +940,7 @@ const domElements = (function () {
     emptyList,
     deleteAddProjectIcon,
     setActive,
+    removeArrows,
   };
 })();
 

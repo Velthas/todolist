@@ -108,6 +108,13 @@ const projectData = (function () {
     projects = storedProjects;
   }
 
+  function changeTaskPosition(task, newlocationindex) {
+    //First, deletes the task from its original position
+    removeTask(task.projectIndex, task.taskIndex);
+    const project = returnProject(task.projectIndex);
+    project.tasks.splice(newlocationindex, 0, task);
+}
+
   return {
     extractIcon,
     createProject,
@@ -121,11 +128,13 @@ const projectData = (function () {
     replaceEditedTask,
     returnProjectsArray,
     updateFromLocalStorage,
+    changeTaskPosition,
   };
 })();
 
 // This IIFE handles projects that exist for every user
 const defaultProjects = (function () {
+  // Notice how standard projects have a property of standard
   // Home holds all tasks regardless of urgency
   const home = {
     name: 'Home',
@@ -188,6 +197,7 @@ const defaultProjects = (function () {
       populateStandardProjects();
       domElements.showProjectInterface(home);
       domElements.deleteAddProjectIcon();
+      domElements.removeArrows();
       domElements.setActive(homeDiv);
     });
 
@@ -196,6 +206,7 @@ const defaultProjects = (function () {
       populateStandardProjects();
       domElements.showProjectInterface(today);
       domElements.deleteAddProjectIcon();
+      domElements.removeArrows();
       domElements.setActive(todayDiv);
     });
 
@@ -204,6 +215,7 @@ const defaultProjects = (function () {
       populateStandardProjects();
       domElements.showProjectInterface(urgent);
       domElements.deleteAddProjectIcon();
+      domElements.removeArrows();
       domElements.setActive(urgentDiv);
     });
   }

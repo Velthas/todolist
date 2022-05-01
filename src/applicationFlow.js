@@ -109,6 +109,25 @@ const applicationFlow = (function () {
     localStorageFunctions.updateStoredProjects();
   }
 
+  function moveTask(direction, task) {
+    if (direction === 'up') {
+        if (task.taskIndex === 0) return
+        else {
+            let newUpPosition = task.taskIndex - 1;
+            projectData.changeTaskPosition(task, newUpPosition);
+        }
+    }
+    else if (direction === 'down') {
+        if (task.taskIndex === projectData.returnProject(task.projectIndex).tasks.length) return
+        else {
+            let newDownPosition = task.taskIndex + 1;
+            projectData.changeTaskPosition(task, newDownPosition);
+        }
+    }
+
+    localStorageFunctions.updateStoredProjects();
+}
+
   function deleteTask(taskObject, projectObject) {
     // Goes into project data and splices task array
     projectData.removeTask(taskObject.projectIndex, taskObject.taskIndex);
@@ -130,6 +149,7 @@ const applicationFlow = (function () {
     deleteTask,
     generateTaskList,
     changeCompletedStatus,
+    moveTask,
   };
 })();
 
