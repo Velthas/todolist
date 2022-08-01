@@ -17,6 +17,7 @@ const applicationFlow = (function () {
   }
 
   // This looks into the appropriate project and adds the task
+  
   function insertTask(projectObject) {
     // Extract the data of the task into an array
     const taskInfo = domElements.getTaskData();

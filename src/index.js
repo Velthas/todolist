@@ -30,31 +30,141 @@ const projectData = (function () {
   // The one array with projects
   let projects = [];
 
-  // Factory functions to create projects
+  // Object to use for inheritance
+  const projectMethods = {
+    //TODO: FIX FOR INHERITANCE
+    'insertTask': function() {
+
+    // TODO: THIS IS A LOT OF CALLBACKS, SEE IF YOU CAN SPLIT RESPONSIBILITY
+    // Extract the data of the task into an array
+    const taskInfo = domElements.getTaskData();
+    // Uses a factory to create the task
+    const newTask = createTask(
+      taskInfo[0],
+      taskInfo[1],
+      taskInfo[2],
+      taskInfo[3]
+    );
+    // Assigns the task the position of its project so it can be retrieved later for deletion
+    newTask.projectIndex = this.position;
+
+    // Append the task to the project's task array
+    this.tasks.push(newTask);
+
+    // TODO: THIS NEEDS TO BE ITS OWN FUNCTION FOR DOM STUFF
+    // Updates the number of tasks on the list
+    const noOfTasks = document.querySelector('#taskCounter p');
+    const number = Number(noOfTasks.textContent.split(' ')[0]) + 1;
+    noOfTasks.textContent = number + ' Task(s)';
+
+    // TODO: THIS NEEDS TO BE SEPARATED FROM HERE
+    // This updates the local storage upon task insertion
+    localStorageFunctions.updateStoredProjects();
+    },
+    //TODO: FIX FOR INHERITANCE
+    'deleteTask':  function(taskIndex) {
+      // Removes the task from the project's task array
+      this.tasks.splice(taskIndex, 1);
+      
+      // Displays the project again
+      this.displayProject();
+      
+      //TODO: MAYBE DECOUPLE THIS 
+      // Update the local storage when a task is deleted
+      localStorageFunctions.updateStoredProjects();
+    },
+    //TODO: FIX FOR INHERITANCE
+    'displayProject': function() {
+      domElements.deleteGeneratedDivs('.taskEntry');
+      const length = this.tasks.length;
+      for (let i = 0; i < length; i++) {
+        // Get the task from the tasks array within the project
+        const taskObject = this.tasks[i];
+        // Information about what project the task is related to is now on the task itself
+        taskObject.projectIndex = this.position;
+        // Standard projects have a skewed taskIndex value because it holds info from different projects
+        taskObject.taskIndex = i;
+  
+        taskObject.displayTask();
+      }
+   }
+  }
+
+  const taskMethods = {
+    //TODO: FIX FOR INHERITANCE
+    'editTask': function() {
+      // Extract the data from the form
+      const data = domElements.getTaskData();
+      // Change the data of the object
+      this.name = data[0];
+      this.description = data[1];
+      this.date = data[2];
+      this.priority = data[3];
+  
+      // Update the local storage of the project array when a task is edited
+      localStorageFunctions.updateStoredProjects();
+      },
+    //TODO: FIX FOR INHERITANCE
+    'changeCompletion': function() {
+        switch (true) {
+          case this.completed === true:
+            this.completed = false;
+            //TODO: HOW DO I CHANGE THE CONTAINER?
+            taskContainer.classList.remove('completed');
+            break;
+          case this.completed === false:
+            this.completed = true;
+            //TODO: SURELY THIS CAN BE DECOUPLED?
+            taskContainer.classList.add('completed');
+        }
+      },
+      'displayTask': function() {
+        domElements.createTaskDiv(this);
+      },
+  }
+
+  // Factory function to create projects
   function createProject(name, icon) {
     // This will be an array of objects containing the tasks
     const tasks = [];
-    // This will tell us at what position the array is and will be reassigned dynamically
+    // This will store the project's position in the array of projects
     const position = 0;
+    // Signals that this project is not a predefined one, so user generated
+    const standard = false;
 
-    return {
-      name,
-      icon,
-      tasks,
-      position,
-    };
+    // Our project acquired its method through this line
+    // It basically makes it point to the projectMethods object
+    // So when that method is not found on the project itself
+    // It refers back to that object, and carries out the task.
+    let newProject = Object.create(projectMethods);
+
+    // Assign properties to object
+    newProject.name = name;
+    newProject.icon = icon;
+    newProject.tasks = tasks;
+    newProject.position = position;
+    newProject.standard = standard;
+
+    return newProject;
   }
 
   // Factory function to create tasks
   function createTask(name, description, date, priority) {
-    // Completed will be useful later and position is to once again identify and delete tasks
-    return {
-      name,
-      description,
-      date,
-      priority,
-      completed: false,
-    };
+
+    // This creates a new task using the taskMethod object as the prototype
+    // This means the new task can use all of taskMethods's methods. Coolio.
+    const newTask = Object.create(taskMethods);
+
+    // Set properties on the new object
+    newTask.name = name;
+    newTask.description = description;
+    newTask.date = date;
+    newTask.priority = priority;
+    newTask.completed = false;
+
+    // Return
+    return newTask;
+
   }
 
   // Used in combination with radio buttons to retrieve icon URL
@@ -80,11 +190,6 @@ const projectData = (function () {
   // Remove a project from the project array
   function deleteProject(position) {
     projects.splice(position, 1);
-  }
-
-  // Adds new task to the project at the specified index
-  function addTask(index, newTask) {
-    projects[index].tasks.push(newTask);
   }
 
   // Removes a task by looking at the tasks array of a project and splicing the array
