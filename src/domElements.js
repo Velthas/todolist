@@ -168,12 +168,12 @@ const domElements = (function () {
 
     projectName.addEventListener('click', function () {
       setActive(projectContainer);
-      showProjectInterface(projectObject);
+      applicationFlow.displayTaskList(projectObject);
     });
 
     projectIcon.addEventListener('click', function () {
       setActive(projectContainer);
-      showProjectInterface(projectObject);
+      applicationFlow.displayTaskList(projectObject);
     });
 
     const sidebar = document.querySelector('#userProjList');
@@ -242,10 +242,10 @@ const domElements = (function () {
       if (form === 'task') {
         applicationFlow.deleteTask(taskObject, projectObject);
         deleteForm(formBackdrop);
+        //TODO: FIX THIS BY FINDING A BETTER WAY
         document.querySelector('.active p').click();
       } else {
-        projectData.deleteProject(projectObject.position);
-        applicationFlow.displayProjects();
+        applicationFlow.deleteProject(projectObject)
         emptyList();
         deleteForm(formBackdrop);
       }
@@ -406,7 +406,7 @@ const domElements = (function () {
         return;
       }
       applicationFlow.insertTask(projectObject);
-      applicationFlow.generateTaskList(projectObject);
+      applicationFlow.displayTaskList(projectObject);
       deleteForm(formBackdrop);
     });
 
@@ -835,9 +835,6 @@ const domElements = (function () {
     // Append everything
     list.appendChild(taskContainer);
     document.querySelector('#main').appendChild(list);
-
-    // Generates the task list by looking at the task array in the project object
-    applicationFlow.generateTaskList(projectObject);
   }
 
   // Binds generic event listeners
@@ -866,7 +863,7 @@ const domElements = (function () {
     addProjectIcon.remove();
   }
 
-  // Toggles active class for projects ;
+  // Toggles active class for projects
   function setActive(projectContainer) {
     // If there is an active project, untoggle it
     const activeProject = document.querySelector('.active');
@@ -880,8 +877,19 @@ const domElements = (function () {
     projectContainer.classList.add('active');
   }
 
+  // This function empties the task list in a jiffy
   function emptyList() {
     document.querySelector('#list').textContent = '';
+  }
+
+  // This function updates the number of tasks as they get inserted
+  // TODO: Maybe make it so that it also update when they are deleted?
+  function updateTaskNumber() {
+
+        // Updates the number of tasks on the list
+        const noOfTasks = document.querySelector('#taskCounter p');
+        const number = Number(noOfTasks.textContent.split(' ')[0]) + 1;
+        noOfTasks.textContent = number + ' Task(s)';
   }
 
   bindEventListeners();
@@ -897,6 +905,7 @@ const domElements = (function () {
     emptyList,
     deleteAddProjectIcon,
     setActive,
+    updateTaskNumber
   };
 })();
 

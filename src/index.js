@@ -1,4 +1,3 @@
-/* eslint-disable wrap-iife */
 // Importing style sheets
 import './style.css';
 import './projectForm.css';
@@ -34,8 +33,6 @@ const projectData = (function () {
   const projectMethods = {
     //TODO: FIX FOR INHERITANCE
     'insertTask': function() {
-
-    // TODO: THIS IS A LOT OF CALLBACKS, SEE IF YOU CAN SPLIT RESPONSIBILITY
     // Extract the data of the task into an array
     const taskInfo = domElements.getTaskData();
     // Uses a factory to create the task
@@ -50,48 +47,34 @@ const projectData = (function () {
 
     // Append the task to the project's task array
     this.tasks.push(newTask);
-
-    // TODO: THIS NEEDS TO BE ITS OWN FUNCTION FOR DOM STUFF
-    // Updates the number of tasks on the list
-    const noOfTasks = document.querySelector('#taskCounter p');
-    const number = Number(noOfTasks.textContent.split(' ')[0]) + 1;
-    noOfTasks.textContent = number + ' Task(s)';
-
-    // TODO: THIS NEEDS TO BE SEPARATED FROM HERE
-    // This updates the local storage upon task insertion
-    localStorageFunctions.updateStoredProjects();
     },
-    //TODO: FIX FOR INHERITANCE
-    'deleteTask':  function(taskIndex) {
+    // Pass the task you want to delete
+    'deleteTask':  function(task) {
+      const indexOfTask = this.tasks.indexOf(task);
       // Removes the task from the project's task array
-      this.tasks.splice(taskIndex, 1);
+      this.tasks.splice(indexOfTask, 1);
       
       // Displays the project again
       this.displayProject();
-      
-      //TODO: MAYBE DECOUPLE THIS 
-      // Update the local storage when a task is deleted
-      localStorageFunctions.updateStoredProjects();
     },
-    //TODO: FIX FOR INHERITANCE
     'displayProject': function() {
       domElements.deleteGeneratedDivs('.taskEntry');
       const length = this.tasks.length;
+      // Iterate over the task array
       for (let i = 0; i < length; i++) {
         // Get the task from the tasks array within the project
         const taskObject = this.tasks[i];
         // Information about what project the task is related to is now on the task itself
         taskObject.projectIndex = this.position;
-        // Standard projects have a skewed taskIndex value because it holds info from different projects
+        // Reassign task index to make sure everything is in place
         taskObject.taskIndex = i;
-  
+        // Creates the div and appends it to the task section
         taskObject.displayTask();
       }
-   }
+   },
   }
 
   const taskMethods = {
-    //TODO: FIX FOR INHERITANCE
     'editTask': function() {
       // Extract the data from the form
       const data = domElements.getTaskData();
@@ -104,18 +87,13 @@ const projectData = (function () {
       // Update the local storage of the project array when a task is edited
       localStorageFunctions.updateStoredProjects();
       },
-    //TODO: FIX FOR INHERITANCE
     'changeCompletion': function() {
         switch (true) {
           case this.completed === true:
             this.completed = false;
-            //TODO: HOW DO I CHANGE THE CONTAINER?
-            taskContainer.classList.remove('completed');
             break;
           case this.completed === false:
             this.completed = true;
-            //TODO: SURELY THIS CAN BE DECOUPLED?
-            taskContainer.classList.add('completed');
         }
       },
       'displayTask': function() {
@@ -192,16 +170,6 @@ const projectData = (function () {
     projects.splice(position, 1);
   }
 
-  // Removes a task by looking at the tasks array of a project and splicing the array
-  function removeTask(objectIndex, taskIndex) {
-    projects[objectIndex].tasks.splice(taskIndex, 1);
-  }
-
-  // After a task is edited, the old one is replaced with the new one
-  function replaceEditedTask(task) {
-    projects[task.projectIndex].tasks[task.taskIndex] = task;
-  }
-
   // This returns the project array for storing in localstorage
   function returnProjectsArray() {
     return projects;
@@ -211,6 +179,22 @@ const projectData = (function () {
   // When the page first loads
   function updateFromLocalStorage(storedProjects) {
     projects = storedProjects;
+
+    // Now our projects and tasks are lacking their original methods.
+    // We use Object.assign to lump the two objects together
+    for(let i = 0; i < projects.length; i++) {
+      // The first loop will iterate through the projects
+      projects[i] = Object.assign(projects[i], projectMethods);
+      console.log(projects[i])
+
+      // The second loop handles the tasks
+      for(let k = 0; k < projects[i].tasks.length; k++) {
+        projects[i].tasks[k] = Object.assign(projects[i].tasks[k], taskMethods);
+        console.log(projects[i].tasks[k])
+      }
+    }
+
+
   }
 
   return {
@@ -218,12 +202,9 @@ const projectData = (function () {
     createProject,
     createTask,
     addProject,
-    addTask,
-    removeTask,
     returnArrayLength,
     returnProject,
     deleteProject,
-    replaceEditedTask,
     returnProjectsArray,
     updateFromLocalStorage,
   };
