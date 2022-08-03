@@ -17,6 +17,10 @@ import infoIcon from './images/info.svg';
 import greenInfoIcon from './images/greeninfo.svg';
 import editIcon from './images/edit.svg';
 
+//Icons to change task position
+import angleUp from './images/angle-up.svg'
+import angleDown from './images/angle-down.svg'
+
 // eslint-disable-next-line wrap-iife
 const domElements = (function () {
   function createProjectForm() {
@@ -242,8 +246,6 @@ const domElements = (function () {
       if (form === 'task') {
         applicationFlow.deleteTask(taskObject, projectObject);
         deleteForm(formBackdrop);
-        //TODO: FIX THIS BY FINDING A BETTER WAY
-        document.querySelector('.active p').click();
       } else {
         applicationFlow.deleteProject(projectObject)
         emptyList();
@@ -626,6 +628,46 @@ const domElements = (function () {
     taskPriority.classList.add('taskPriority');
     taskEntry.appendChild(taskPriority);
 
+    // Icons to move task order
+    const arrowContainer = document.createElement('div');
+    arrowContainer.setAttribute('class','flex-column arrowContainer');
+
+    const moveUpIcon = document.createElement('img');
+    moveUpIcon.src = angleUp;
+    moveUpIcon.alt = "This arrow is used to move a task up the list"
+    moveUpIcon.classList.add('arrows');
+
+    moveUpIcon.addEventListener('click', function () { 
+      // This visually moves the div up one slot
+      const allTaskDivs = Array.from(document.querySelectorAll('.taskEntry'));
+      if (taskObject.taskIndex === 0) return
+      else {
+        document.querySelector('#taskList').insertBefore(taskEntry, allTaskDivs[taskObject.taskIndex - 1])
+      }
+      // This makes the change take place under the hood
+      applicationFlow.moveTask('up', taskObject);
+    } )
+
+    const moveDownIcon = document.createElement('img');
+    moveDownIcon.src = angleDown;
+    moveDownIcon.alt = "This arrow is used to move a task down the list"
+    moveDownIcon.classList.add('arrows');
+
+    moveDownIcon.addEventListener('click', function () {
+            // This visually moves the div down one slot
+            const allTaskDivs = Array.from(document.querySelectorAll('.taskEntry'));
+            if (taskObject.taskIndex === allTaskDivs.length - 1) return
+            else {
+              document.querySelector('#taskList').insertBefore(taskEntry, allTaskDivs[taskObject.taskIndex + 2])
+              }
+            // This makes the change take place under the hood
+            applicationFlow.moveTask('down', taskObject);
+    })
+
+    arrowContainer.appendChild(moveUpIcon);
+    arrowContainer.appendChild(moveDownIcon);
+    taskPriority.appendChild(arrowContainer);
+
     const completedImg = document.createElement('img');
     completedImg.src = taskObject.completed === true ? checkIcon : squareIcon;
     completedImg.addEventListener('click', function () {
@@ -882,10 +924,16 @@ const domElements = (function () {
     document.querySelector('#list').textContent = '';
   }
 
-  // This function updates the number of tasks as they get inserted
-  // TODO: Maybe make it so that it also update when they are deleted?
-  function updateTaskNumber() {
+  // This function is to be used in standard projects
+  // Since arrow functionality is exclusive to user created projects
+  // Remove them when this function is invoked (in index.js)
+  function removeArrows() {
+    const allArrowsContainers = document.querySelectorAll('.arrowContainer');
+    allArrowsContainers.forEach((arrows) => arrows.remove());
+  }
 
+  // This function updates the number of tasks as they get inserted
+  function updateTaskNumber() {
         // Updates the number of tasks on the list
         const noOfTasks = document.querySelector('#taskCounter p');
         const number = Number(noOfTasks.textContent.split(' ')[0]) + 1;
@@ -905,7 +953,8 @@ const domElements = (function () {
     emptyList,
     deleteAddProjectIcon,
     setActive,
-    updateTaskNumber
+    updateTaskNumber,
+    removeArrows,
   };
 })();
 

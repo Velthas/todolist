@@ -79,6 +79,16 @@ const applicationFlow = (function () {
     localStorageFunctions.updateStoredProjects();
   }
 
+  // This function is to enable task moving functionality
+  function moveTask(direction, task) {
+    // Move the task inside the task array of the project
+    task.move(direction);
+
+    // Update local storage
+    localStorageFunctions.updateStoredProjects();
+
+}
+
   function deleteTask(taskObject, projectObject) {
 
     // Delete the task from the project.
@@ -115,6 +125,7 @@ const applicationFlow = (function () {
     insertTask,
     editTask,
     deleteTask,
+    moveTask,
     displayTaskList,
     changeCompletedStatus,
     deleteProject

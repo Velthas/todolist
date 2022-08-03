@@ -48,7 +48,7 @@ const projectData = (function () {
     this.tasks.push(newTask);
 
     // Inform us of where the task is in the task array for manipulation later
-    newTask.taskIndex = tasks.indexOf(newTask);
+    newTask.taskIndex = this.tasks.indexOf(newTask);
     },
     'displayProject': function() {
       domElements.deleteGeneratedDivs('.taskEntry');
@@ -83,7 +83,21 @@ const projectData = (function () {
     // Pass the task you want to delete
     'deleteTask':  function() {
       // Uses the project index and task index we stored to delete the task
-      projects[this.projectIndex].tasks.splice(this.taskIndex);
+      projects[this.projectIndex].tasks.splice(this.taskIndex, 1);
+    },
+    'move': function(direction) {
+            // Get its project
+            const project = projects[this.projectIndex];
+            // Make a copy of the task
+            const task = this;
+            //Deletes the task from its original position
+            this.deleteTask();
+            // Get the new location index
+            const newPosition = direction === 'up' ? this.taskIndex - 1 : this.taskIndex + 1;
+            // Use splice to insert our task at the appropriate position.
+            project.tasks.splice(newPosition, 0, task);
+            // Update position
+            updatePositions();
     },
     'changeCompletion': function() {
         switch (true) {
@@ -176,6 +190,20 @@ const projectData = (function () {
     // For safety reasons, just return a copy of it;
     const copyOfProjects = projects;
     return copyOfProjects;
+  }
+
+  // This function replaces the position, taskIndex and projectIdex values
+  // When a task is deleted or moved, we need to do this to prevent mix-ups
+  function updatePositions() {
+    for(let i = 0; i < projects.length; i++) {
+      projects[i].position = i;
+      for(let k = 0; k < projects[i].tasks.length; k++){
+
+        const task = projects[i].tasks[k];
+        task.projectIndex = i;
+        task.taskIndex = k;
+      }
+    }
   }
 
   // If a copy of the projects exist in storage, then copy it to replace the empty projects array
@@ -311,6 +339,7 @@ const defaultProjects = (function () {
       applicationFlow.displayTaskList(home);
       domElements.deleteAddProjectIcon();
       domElements.setActive(homeDiv);
+      domElements.removeArrows();
     });
 
     todayDiv.addEventListener('click', () => {
@@ -319,6 +348,7 @@ const defaultProjects = (function () {
       applicationFlow.displayTaskList(today);
       domElements.deleteAddProjectIcon();
       domElements.setActive(todayDiv);
+      domElements.removeArrows();
     });
 
     urgentDiv.addEventListener('click', () => {
@@ -327,6 +357,7 @@ const defaultProjects = (function () {
       applicationFlow.displayTaskList(urgent);
       domElements.deleteAddProjectIcon();
       domElements.setActive(urgentDiv);
+      domElements.removeArrows();
     });
   }
 

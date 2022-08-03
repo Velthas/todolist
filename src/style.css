@@ -161,6 +161,17 @@ div#newTask:hover {
     align-items: center;
 }
 
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.flex-column .arrows {
+    width: 10px;
+    height: 10px;
+}
+
 .taskDate {
     color: #25cd7b;
     margin-right: 10px;
@@ -225,6 +236,10 @@ div#newTask:hover {
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+.taskEntry * {
+    align-self: center;
 }
 
 #footer {
