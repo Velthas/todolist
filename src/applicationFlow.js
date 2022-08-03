@@ -82,7 +82,10 @@ const applicationFlow = (function () {
   function deleteTask(taskObject, projectObject) {
 
     // Delete the task from the project.
-    projectObject.deleteTask(taskObject);
+    taskObject.deleteTask();
+
+    // Refresh the list
+    displayTaskList(projectObject);
 
     // Regenerate task divs without the deleted one
     const activeProject = document.querySelector('.active');

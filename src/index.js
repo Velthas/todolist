@@ -31,7 +31,6 @@ const projectData = (function () {
 
   // Object to use for inheritance
   const projectMethods = {
-    //TODO: FIX FOR INHERITANCE
     'insertTask': function() {
     // Extract the data of the task into an array
     const taskInfo = domElements.getTaskData();
@@ -47,15 +46,9 @@ const projectData = (function () {
 
     // Append the task to the project's task array
     this.tasks.push(newTask);
-    },
-    // Pass the task you want to delete
-    'deleteTask':  function(task) {
-      const indexOfTask = this.tasks.indexOf(task);
-      // Removes the task from the project's task array
-      this.tasks.splice(indexOfTask, 1);
-      
-      // Displays the project again
-      this.displayProject();
+
+    // Inform us of where the task is in the task array for manipulation later
+    newTask.taskIndex = tasks.indexOf(newTask);
     },
     'displayProject': function() {
       domElements.deleteGeneratedDivs('.taskEntry');
@@ -87,6 +80,11 @@ const projectData = (function () {
       // Update the local storage of the project array when a task is edited
       localStorageFunctions.updateStoredProjects();
       },
+    // Pass the task you want to delete
+    'deleteTask':  function() {
+      // Uses the project index and task index we stored to delete the task
+      projects[this.projectIndex].tasks.splice(this.taskIndex);
+    },
     'changeCompletion': function() {
         switch (true) {
           case this.completed === true:
@@ -111,7 +109,7 @@ const projectData = (function () {
     const standard = false;
 
     // Our project acquired its method through this line
-    // It basically makes it point to the projectMethods object
+    // It basically creates a new empty object that points to ProjectMethods
     // So when that method is not found on the project itself
     // It refers back to that object, and carries out the task.
     let newProject = Object.create(projectMethods);
@@ -129,7 +127,7 @@ const projectData = (function () {
   // Factory function to create tasks
   function createTask(name, description, date, priority) {
 
-    // This creates a new task using the taskMethod object as the prototype
+    // This creates a new task using the taskMethod object as the ''prototype''
     // This means the new task can use all of taskMethods's methods. Coolio.
     const newTask = Object.create(taskMethods);
 
@@ -153,6 +151,9 @@ const projectData = (function () {
   // This pushes new project into the projects
   function addProject(projectObject) {
     projects.push(projectObject);
+    // Specifies where it is in the project array
+    let position = projects.indexOf(projectObject);
+    projectObject.position = position;
   }
 
   // Use this to service the project to a for loop for display
@@ -172,7 +173,9 @@ const projectData = (function () {
 
   // This returns the project array for storing in localstorage
   function returnProjectsArray() {
-    return projects;
+    // For safety reasons, just return a copy of it;
+    const copyOfProjects = projects;
+    return copyOfProjects;
   }
 
   // If a copy of the projects exist in storage, then copy it to replace the empty projects array
@@ -181,20 +184,24 @@ const projectData = (function () {
     projects = storedProjects;
 
     // Now our projects and tasks are lacking their original methods.
-    // We use Object.assign to lump the two objects together
+    // My logic is: create a new object that points to the objet with methods.
+    // Then lump all the properties of the 'real' project or task object with that one.
+    // That way, we will have an object that is capable of inheriting those methods
+    // And at the same time preserve all of the original info. 
+    // We can join the two objects using Object.assign.
     for(let i = 0; i < projects.length; i++) {
       // The first loop will iterate through the projects
-      projects[i] = Object.assign(projects[i], projectMethods);
-      console.log(projects[i])
+      const objWithMethods = Object.create(projectMethods);
+      projects[i] = Object.assign(objWithMethods, projects[i]);
+      console.log(projects[i]);
 
       // The second loop handles the tasks
       for(let k = 0; k < projects[i].tasks.length; k++) {
-        projects[i].tasks[k] = Object.assign(projects[i].tasks[k], taskMethods);
+        const taskObjWithMethods = Object.create(taskMethods);
+        projects[i].tasks[k] = Object.assign(taskObjWithMethods, projects[i].tasks[k]);
         console.log(projects[i].tasks[k])
       }
     }
-
-
   }
 
   return {
@@ -212,12 +219,32 @@ const projectData = (function () {
 
 // This IIFE handles projects that exist for every user
 const defaultProjects = (function () {
+
+  // This is a copy of the displayProject function method of projects
+  // It only serves to trick the applicationFlow function into
+  // Thinking it's dealing with a real project 
+    const displayProject = function() {
+        domElements.deleteGeneratedDivs('.taskEntry');
+        console.log(this);
+        const length = this.tasks.length;
+        // Iterate over the task array
+        for (let i = 0; i < length; i++) {
+        // Get the task from the tasks array within the project
+        const taskObject = this.tasks[i];
+
+        //Notice how this copy of the function does not change taskIndex nor projectIndex
+        // Creates the div and appends it to the task section
+        taskObject.displayTask();
+      }
+    }
+
   // Home holds all tasks regardless of urgency
   const home = {
     name: 'Home',
     icon: homeIcon,
     tasks: [],
     standard: true,
+    'displayProject': displayProject,
   };
   // Gathers all the projects that are due today
   const today = {
@@ -225,6 +252,7 @@ const defaultProjects = (function () {
     icon: todayIcon,
     tasks: [],
     standard: true,
+    'displayProject': displayProject,
   };
   // Gathers all the tasks with high priority
   const urgent = {
@@ -232,8 +260,11 @@ const defaultProjects = (function () {
     icon: urgentIcon,
     tasks: [],
     standard: true,
+    'displayProject': displayProject,
   };
 
+  // This functions stores all the tasks inside the standard projects
+  // It looks at all the tasks and sorts them after verifying conditions
   function populateStandardProjects() {
     const projectsArrayLength = projectData.returnArrayLength();
 
@@ -244,7 +275,9 @@ const defaultProjects = (function () {
       for (let j = 0; j < project.tasks.length; j++) {
         // Store here to avoid pointless repetition
         const task = project.tasks[j];
+
         // Keep track of the project index and task index
+        // Just a failsafe at this point because we have them already stored and safe
         task.projectIndex = i;
         task.taskIndex = j;
 
@@ -258,21 +291,27 @@ const defaultProjects = (function () {
     }
   }
 
+  // I use this function to clear the storage each time
+  // This way we avoid task being reappended infinitely 
   function clearStandardProjects() {
     home.tasks = [];
     today.tasks = [];
     urgent.tasks = [];
   }
 
+  // Standard projects are already hard coded into the html
+  // So we need to bind their respective objects to them
+  // Since it's just three, we can do so manually
   function bindEventListeners() {
     const homeDiv = document.querySelector('#home');
     const todayDiv = document.querySelector('#today');
     const urgentDiv = document.querySelector('#urgent');
+   
 
     homeDiv.addEventListener('click', () => {
       clearStandardProjects();
       populateStandardProjects();
-      domElements.showProjectInterface(home);
+      applicationFlow.displayTaskList(home);
       domElements.deleteAddProjectIcon();
       domElements.setActive(homeDiv);
     });
@@ -280,7 +319,7 @@ const defaultProjects = (function () {
     todayDiv.addEventListener('click', () => {
       clearStandardProjects();
       populateStandardProjects();
-      domElements.showProjectInterface(today);
+      applicationFlow.displayTaskList(today);
       domElements.deleteAddProjectIcon();
       domElements.setActive(todayDiv);
     });
@@ -288,7 +327,7 @@ const defaultProjects = (function () {
     urgentDiv.addEventListener('click', () => {
       clearStandardProjects();
       populateStandardProjects();
-      domElements.showProjectInterface(urgent);
+      applicationFlow.displayTaskList(urgent);
       domElements.deleteAddProjectIcon();
       domElements.setActive(urgentDiv);
     });
