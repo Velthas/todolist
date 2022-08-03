@@ -193,13 +193,11 @@ const projectData = (function () {
       // The first loop will iterate through the projects
       const objWithMethods = Object.create(projectMethods);
       projects[i] = Object.assign(objWithMethods, projects[i]);
-      console.log(projects[i]);
 
       // The second loop handles the tasks
       for(let k = 0; k < projects[i].tasks.length; k++) {
         const taskObjWithMethods = Object.create(taskMethods);
         projects[i].tasks[k] = Object.assign(taskObjWithMethods, projects[i].tasks[k]);
-        console.log(projects[i].tasks[k])
       }
     }
   }
@@ -225,7 +223,6 @@ const defaultProjects = (function () {
   // Thinking it's dealing with a real project 
     const displayProject = function() {
         domElements.deleteGeneratedDivs('.taskEntry');
-        console.log(this);
         const length = this.tasks.length;
         // Iterate over the task array
         for (let i = 0; i < length; i++) {
