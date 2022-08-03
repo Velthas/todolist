@@ -19,6 +19,10 @@ import editIcon from './images/edit.svg';
 import angleUp from './images/angle-up.svg'
 import angleDown from './images/angle-down.svg'
 
+//Icons to change task position
+import angleUp from './images/angle-up.svg'
+import angleDown from './images/angle-down.svg'
+
 // eslint-disable-next-line wrap-iife
 const domElements = (function () {
   function createProjectForm() {
@@ -172,12 +176,12 @@ const domElements = (function () {
 
     projectName.addEventListener('click', function () {
       setActive(projectContainer);
-      showProjectInterface(projectObject);
+      applicationFlow.displayTaskList(projectObject);
     });
 
     projectIcon.addEventListener('click', function () {
       setActive(projectContainer);
-      showProjectInterface(projectObject);
+      applicationFlow.displayTaskList(projectObject);
     });
 
     const sidebar = document.querySelector('#userProjList');
@@ -246,10 +250,8 @@ const domElements = (function () {
       if (form === 'task') {
         applicationFlow.deleteTask(taskObject, projectObject);
         deleteForm(formBackdrop);
-        document.querySelector('.active p').click();
       } else {
-        projectData.deleteProject(projectObject.position);
-        applicationFlow.displayProjects();
+        applicationFlow.deleteProject(projectObject)
         emptyList();
         deleteForm(formBackdrop);
       }
@@ -410,7 +412,7 @@ const domElements = (function () {
         return;
       }
       applicationFlow.insertTask(projectObject);
-      applicationFlow.generateTaskList(projectObject);
+      applicationFlow.displayTaskList(projectObject);
       deleteForm(formBackdrop);
     });
 
@@ -631,7 +633,6 @@ const domElements = (function () {
     taskEntry.appendChild(taskPriority);
 
     // Icons to move task order
-    // TODO: REMEMBER TO ADD FUNCTIONALITY TO DISABLE THIS ON THE STANDARD PROJECTS
     const arrowContainer = document.createElement('div');
     arrowContainer.setAttribute('class','flex-column arrowContainer');
 
@@ -639,10 +640,16 @@ const domElements = (function () {
     moveUpIcon.src = angleUp;
     moveUpIcon.alt = "This arrow is used to move a task up the list"
     moveUpIcon.classList.add('arrows');
-    
+
     moveUpIcon.addEventListener('click', function () { 
+      // This visually moves the div up one slot
+      const allTaskDivs = Array.from(document.querySelectorAll('.taskEntry'));
+      if (taskObject.taskIndex === 0) return
+      else {
+        document.querySelector('#taskList').insertBefore(taskEntry, allTaskDivs[taskObject.taskIndex - 1])
+      }
+      // This makes the change take place under the hood
       applicationFlow.moveTask('up', taskObject);
-      applicationFlow.generateTaskList(projectData.returnProject(taskObject.projectIndex));
     } )
 
     const moveDownIcon = document.createElement('img');
@@ -651,9 +658,14 @@ const domElements = (function () {
     moveDownIcon.classList.add('arrows');
 
     moveDownIcon.addEventListener('click', function () {
-      applicationFlow.moveTask('down', taskObject);
-      applicationFlow.generateTaskList(projectData.returnProject(taskObject.projectIndex));
-      
+            // This visually moves the div down one slot
+            const allTaskDivs = Array.from(document.querySelectorAll('.taskEntry'));
+            if (taskObject.taskIndex === allTaskDivs.length - 1) return
+            else {
+              document.querySelector('#taskList').insertBefore(taskEntry, allTaskDivs[taskObject.taskIndex + 2])
+              }
+            // This makes the change take place under the hood
+            applicationFlow.moveTask('down', taskObject);
     })
 
     arrowContainer.appendChild(moveUpIcon);
@@ -869,9 +881,6 @@ const domElements = (function () {
     // Append everything
     list.appendChild(taskContainer);
     document.querySelector('#main').appendChild(list);
-
-    // Generates the task list by looking at the task array in the project object
-    applicationFlow.generateTaskList(projectObject);
   }
 
   // Binds generic event listeners
@@ -900,7 +909,7 @@ const domElements = (function () {
     addProjectIcon.remove();
   }
 
-  // Toggles active class for projects ;
+  // Toggles active class for projects
   function setActive(projectContainer) {
     // If there is an active project, untoggle it
     const activeProject = document.querySelector('.active');
@@ -914,6 +923,7 @@ const domElements = (function () {
     projectContainer.classList.add('active');
   }
 
+  // This function empties the task list in a jiffy
   function emptyList() {
     document.querySelector('#list').textContent = '';
   }
@@ -924,7 +934,14 @@ const domElements = (function () {
   function removeArrows() {
     const allArrowsContainers = document.querySelectorAll('.arrowContainer');
     allArrowsContainers.forEach((arrows) => arrows.remove());
+  }
 
+  // This function updates the number of tasks as they get inserted
+  function updateTaskNumber() {
+        // Updates the number of tasks on the list
+        const noOfTasks = document.querySelector('#taskCounter p');
+        const number = Number(noOfTasks.textContent.split(' ')[0]) + 1;
+        noOfTasks.textContent = number + ' Task(s)';
   }
 
   bindEventListeners();
@@ -940,6 +957,7 @@ const domElements = (function () {
     emptyList,
     deleteAddProjectIcon,
     setActive,
+    updateTaskNumber,
     removeArrows,
   };
 })();
