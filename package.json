@@ -17,8 +17,11 @@
   },
   "homepage": "https://github.com/Velthas/todolist#readme",
   "devDependencies": {
+    "@babel/core": "^7.18.10",
+    "@babel/preset-env": "^7.18.10",
+    "babel-loader": "^8.2.5",
     "prettier": "^2.6.2",
-    "webpack": "^5.68.0",
+    "webpack": "^5.74.0",
     "webpack-cli": "^4.9.2"
   },
   "dependencies": {

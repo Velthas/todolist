@@ -19,10 +19,6 @@ import editIcon from './images/edit.svg';
 import angleUp from './images/angle-up.svg'
 import angleDown from './images/angle-down.svg'
 
-//Icons to change task position
-import angleUp from './images/angle-up.svg'
-import angleDown from './images/angle-down.svg'
-
 // eslint-disable-next-line wrap-iife
 const domElements = (function () {
   function createProjectForm() {
