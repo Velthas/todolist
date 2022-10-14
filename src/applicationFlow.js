@@ -87,7 +87,7 @@ const applicationFlow = (function () {
     // Update local storage
     localStorageFunctions.updateStoredProjects();
 
-}
+  }
 
   function deleteTask(taskObject, projectObject) {
 
@@ -128,7 +128,7 @@ const applicationFlow = (function () {
     moveTask,
     displayTaskList,
     changeCompletedStatus,
-    deleteProject
+    deleteProject,
   };
 })();
 

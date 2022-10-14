@@ -1,3 +1,4 @@
+/* eslint-disable wrap-iife */
 /* eslint-disable prefer-arrow-callback */
 
 // Import from date-fns
@@ -16,10 +17,9 @@ import checkIcon from './images/check.svg';
 import infoIcon from './images/info.svg';
 import greenInfoIcon from './images/greeninfo.svg';
 import editIcon from './images/edit.svg';
-import angleUp from './images/angle-up.svg'
-import angleDown from './images/angle-down.svg'
+import angleUp from './images/angle-up.svg';
+import angleDown from './images/angle-down.svg';
 
-// eslint-disable-next-line wrap-iife
 const domElements = (function () {
   function createProjectForm() {
     // Backdrop and main container
@@ -147,8 +147,8 @@ const domElements = (function () {
     // Create main container
     const projectContainer = document.createElement('div');
     projectContainer.classList.add('userProject');
-    //This makes it so hovering over a project displays the full name
-    //Useful when project name is cut in half
+    // This makes it so hovering over a project displays the full name
+    // Useful when project name is cut in half
     projectContainer.setAttribute('title', `${projectObject.name}`);
 
     const projectIcon = document.createElement('img');
@@ -159,7 +159,7 @@ const domElements = (function () {
     // It will be displayed in full in the project interface.
     const projectName = document.createElement('p');
     if (projectObject.name.length > 7) {
-      projectName.textContent = projectObject.name.slice(0, 6) + '...';
+      projectName.textContent = `${projectObject.name.slice(0, 6)}...`;
     } else projectName.textContent = projectObject.name;
     projectContainer.appendChild(projectName);
 
@@ -218,10 +218,9 @@ const domElements = (function () {
     // Description of what is about to be done
     const warningPara = document.createElement('p');
     warningPara.classList.add('formDescription');
-    warningPara.textContent =
-      form === 'task'
-        ? 'Deleted tasks can never be retrieved. Knowing this, do you still wish to proceed?'
-        : 'Deleted projects can never be retrieved. Knowing this, do you still wish to proceed?';
+    warningPara.textContent = form === 'task'
+      ? 'Deleted tasks can never be retrieved. Knowing this, do you still wish to proceed?'
+      : 'Deleted projects can never be retrieved. Knowing this, do you still wish to proceed?';
     formContainer.appendChild(warningPara);
 
     // Buttons to confirm and cancel
@@ -247,7 +246,7 @@ const domElements = (function () {
         applicationFlow.deleteTask(taskObject, projectObject);
         deleteForm(formBackdrop);
       } else {
-        applicationFlow.deleteProject(projectObject)
+        applicationFlow.deleteProject(projectObject);
         emptyList();
         deleteForm(formBackdrop);
       }
@@ -630,39 +629,39 @@ const domElements = (function () {
 
     // Icons to move task order
     const arrowContainer = document.createElement('div');
-    arrowContainer.setAttribute('class','flex-column arrowContainer');
+    arrowContainer.setAttribute('class', 'flex-column arrowContainer');
 
     const moveUpIcon = document.createElement('img');
     moveUpIcon.src = angleUp;
-    moveUpIcon.alt = "This arrow is used to move a task up the list"
+    moveUpIcon.alt = 'This arrow is used to move a task up the list';
     moveUpIcon.classList.add('arrows');
 
-    moveUpIcon.addEventListener('click', function () { 
+    moveUpIcon.addEventListener('click', function () {
       // This visually moves the div up one slot
       const allTaskDivs = Array.from(document.querySelectorAll('.taskEntry'));
-      if (taskObject.taskIndex === 0) return
-      else {
-        document.querySelector('#taskList').insertBefore(taskEntry, allTaskDivs[taskObject.taskIndex - 1])
-      }
+      if (taskObject.taskIndex === 0) return;
+
+      document.querySelector('#taskList').insertBefore(taskEntry, allTaskDivs[taskObject.taskIndex - 1]);
+
       // This makes the change take place under the hood
       applicationFlow.moveTask('up', taskObject);
-    } )
+    });
 
     const moveDownIcon = document.createElement('img');
     moveDownIcon.src = angleDown;
-    moveDownIcon.alt = "This arrow is used to move a task down the list"
+    moveDownIcon.alt = 'This arrow is used to move a task down the list';
     moveDownIcon.classList.add('arrows');
 
     moveDownIcon.addEventListener('click', function () {
-            // This visually moves the div down one slot
-            const allTaskDivs = Array.from(document.querySelectorAll('.taskEntry'));
-            if (taskObject.taskIndex === allTaskDivs.length - 1) return
-            else {
-              document.querySelector('#taskList').insertBefore(taskEntry, allTaskDivs[taskObject.taskIndex + 2])
-              }
-            // This makes the change take place under the hood
-            applicationFlow.moveTask('down', taskObject);
-    })
+      // This visually moves the div down one slot
+      const allTaskDivs = Array.from(document.querySelectorAll('.taskEntry'));
+      if (taskObject.taskIndex === allTaskDivs.length - 1) return;
+
+      document.querySelector('#taskList').insertBefore(taskEntry, allTaskDivs[taskObject.taskIndex + 2]);
+
+      // This makes the change take place under the hood
+      applicationFlow.moveTask('down', taskObject);
+    });
 
     arrowContainer.appendChild(moveUpIcon);
     arrowContainer.appendChild(moveDownIcon);
@@ -761,7 +760,7 @@ const domElements = (function () {
       confirmDeleteForm(
         projectData.returnProject(taskObject.projectIndex),
         'task',
-        taskObject
+        taskObject,
       );
     });
     statusBar.appendChild(delImg);
@@ -899,10 +898,10 @@ const domElements = (function () {
     allDivs.forEach((projectDiv) => projectDiv.remove());
   }
 
-  // This removes the add project icon
-  function deleteAddProjectIcon() {
-    const addProjectIcon = document.querySelector('#newTask');
-    addProjectIcon.remove();
+  // This removes the add task icon
+  function deleteAddTaskIcon() {
+    const addTaskIcon = document.querySelector('#newTask');
+    if (addTaskIcon) addTaskIcon.remove();
   }
 
   // Toggles active class for projects
@@ -934,10 +933,10 @@ const domElements = (function () {
 
   // This function updates the number of tasks as they get inserted
   function updateTaskNumber() {
-        // Updates the number of tasks on the list
-        const noOfTasks = document.querySelector('#taskCounter p');
-        const number = Number(noOfTasks.textContent.split(' ')[0]) + 1;
-        noOfTasks.textContent = number + ' Task(s)';
+    // Updates the number of tasks on the list
+    const noOfTasks = document.querySelector('#taskCounter p');
+    const number = Number(noOfTasks.textContent.split(' ')[0]) + 1;
+    noOfTasks.textContent = `${number} Task(s)`;
   }
 
   bindEventListeners();
@@ -951,7 +950,7 @@ const domElements = (function () {
     deleteGeneratedDivs,
     getTaskData,
     emptyList,
-    deleteAddProjectIcon,
+    deleteAddTaskIcon,
     setActive,
     updateTaskNumber,
     removeArrows,
