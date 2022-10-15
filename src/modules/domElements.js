@@ -1,25 +1,30 @@
-/* eslint-disable wrap-iife */
-/* eslint-disable prefer-arrow-callback */
-
-// Import from date-fns
 import { format } from 'date-fns';
 
-import { projectData, localStorageFunctions } from './index';
-import applicationFlow from './applicationFlow';
+import App from '../app';
 
-// This is a cross icon for deletion
-import crossIcon from './images/cross-circle.svg';
-import blackCrossIcon from './images/cross-circle-black.svg';
+// Icons for UI
+import crossIcon from '../images/cross-circle.svg';
+import blackCrossIcon from '../images/cross-circle-black.svg';
 
-// These icons are needed for the task divs
-import squareIcon from './images/square.svg';
-import checkIcon from './images/check.svg';
-import infoIcon from './images/info.svg';
-import greenInfoIcon from './images/greeninfo.svg';
-import editIcon from './images/edit.svg';
-import angleUp from './images/angle-up.svg';
-import angleDown from './images/angle-down.svg';
+// Icons for task divs
+import squareIcon from '../images/square.svg';
+import checkIcon from '../images/check.svg';
+import infoIcon from '../images/info.svg';
+import greenInfoIcon from '../images/greeninfo.svg';
+import editIcon from '../images/edit.svg';
+import angleUp from '../images/angle-up.svg';
+import angleDown from '../images/angle-down.svg';
 
+// Icons for projects
+import star from '../images/star.svg';
+import cards from '../images/playing-cards.svg';
+import shopping from '../images/shopping-bag.svg';
+import heart from '../images/heart.svg';
+import book from '../images/book-alt.svg';
+
+const icons = [star, cards, shopping, heart, book];
+
+// eslint-disable-next-line wrap-iife
 const domElements = (function () {
   function createProjectForm() {
     // Backdrop and main container
@@ -40,7 +45,7 @@ const domElements = (function () {
     const formX = document.createElement('p');
     formX.textContent = 'X';
     formX.setAttribute('class', 'formClose');
-    formX.addEventListener('click', function () {
+    formX.addEventListener('click', () => {
       deleteForm(formBackdrop);
     });
     formHeader.appendChild(formName);
@@ -95,7 +100,7 @@ const domElements = (function () {
       if (i === 0) radioButton.checked = true;
 
       const image = document.createElement('img');
-      const url = projectData.extractIcon(i);
+      const url = icons[i];
       image.src = url;
       wrappingLabel.appendChild(image);
 
@@ -115,7 +120,7 @@ const domElements = (function () {
     cancelBtn.classList.add('cancel');
     cancelBtn.textContent = 'Cancel';
     btnContainer.appendChild(cancelBtn);
-    cancelBtn.addEventListener('click', function () {
+    cancelBtn.addEventListener('click', () => {
       deleteForm(formBackdrop);
     });
 
@@ -126,9 +131,8 @@ const domElements = (function () {
 
     // When a new task is created, perform these actions:
     // Extract the data from form, insert it into the task array within the project array
-    confirmBtn.addEventListener('click', function () {
-      applicationFlow.insertProject();
-      applicationFlow.displayProjects();
+    confirmBtn.addEventListener('click', () => {
+      App.insertProject();
       deleteForm(formBackdrop);
     });
 
@@ -144,19 +148,15 @@ const domElements = (function () {
 
   // This creates a project div for a project
   function createProjectDiv(projectObject) {
-    // Create main container
     const projectContainer = document.createElement('div');
     projectContainer.classList.add('userProject');
-    // This makes it so hovering over a project displays the full name
-    // Useful when project name is cut in half
     projectContainer.setAttribute('title', `${projectObject.name}`);
 
     const projectIcon = document.createElement('img');
     projectIcon.src = projectObject.icon;
     projectContainer.appendChild(projectIcon);
 
-    // Make sure to check if the name is longer and if it is, cut it.
-    // It will be displayed in full in the project interface.
+    // Cut chars if too long to prevent UI issues.
     const projectName = document.createElement('p');
     if (projectObject.name.length > 7) {
       projectName.textContent = `${projectObject.name.slice(0, 6)}...`;
@@ -166,18 +166,13 @@ const domElements = (function () {
     const deleteProjectIcon = document.createElement('img');
     deleteProjectIcon.src = blackCrossIcon;
     projectContainer.appendChild(deleteProjectIcon);
-    deleteProjectIcon.addEventListener('click', function () {
+    deleteProjectIcon.addEventListener('click', () => {
       confirmDeleteForm(projectObject, 'project');
     });
 
-    projectName.addEventListener('click', function () {
+    projectContainer.addEventListener('click', () => {
       setActive(projectContainer);
-      applicationFlow.displayTaskList(projectObject);
-    });
-
-    projectIcon.addEventListener('click', function () {
-      setActive(projectContainer);
-      applicationFlow.displayTaskList(projectObject);
+      App.displayTaskList(projectObject);
     });
 
     const sidebar = document.querySelector('#userProjList');
@@ -206,7 +201,7 @@ const domElements = (function () {
     const formX = document.createElement('p');
     formX.textContent = 'X';
     formX.setAttribute('class', 'formClose');
-    formX.addEventListener('click', function () {
+    formX.addEventListener('click', () => {
       deleteForm(formBackdrop);
     });
 
@@ -218,9 +213,10 @@ const domElements = (function () {
     // Description of what is about to be done
     const warningPara = document.createElement('p');
     warningPara.classList.add('formDescription');
-    warningPara.textContent = form === 'task'
-      ? 'Deleted tasks can never be retrieved. Knowing this, do you still wish to proceed?'
-      : 'Deleted projects can never be retrieved. Knowing this, do you still wish to proceed?';
+    warningPara.textContent =
+      form === 'task'
+        ? 'Deleted tasks can never be retrieved. Knowing this, do you still wish to proceed?'
+        : 'Deleted projects can never be retrieved. Knowing this, do you still wish to proceed?';
     formContainer.appendChild(warningPara);
 
     // Buttons to confirm and cancel
@@ -231,7 +227,7 @@ const domElements = (function () {
     cancelBtn.classList.add('delcancel');
     cancelBtn.textContent = 'Cancel';
     btnContainer.appendChild(cancelBtn);
-    cancelBtn.addEventListener('click', function () {
+    cancelBtn.addEventListener('click', () => {
       deleteForm(formBackdrop);
     });
 
@@ -241,12 +237,12 @@ const domElements = (function () {
     btnContainer.appendChild(confirmBtn);
 
     // Deletes all the tasks or projects, then reappends the updated list
-    confirmBtn.addEventListener('click', function () {
+    confirmBtn.addEventListener('click', () => {
       if (form === 'task') {
-        applicationFlow.deleteTask(taskObject, projectObject);
+        App.deleteTask(taskObject, projectObject);
         deleteForm(formBackdrop);
       } else {
-        applicationFlow.deleteProject(projectObject);
+        App.deleteProject(projectObject);
         emptyList();
         deleteForm(formBackdrop);
       }
@@ -282,7 +278,7 @@ const domElements = (function () {
     const formX = document.createElement('p');
     formX.textContent = 'X';
     formX.setAttribute('class', 'formClose');
-    formX.addEventListener('click', function () {
+    formX.addEventListener('click', () => {
       deleteForm(formBackdrop);
     });
 
@@ -392,7 +388,7 @@ const domElements = (function () {
     cancelBtn.classList.add('cancel');
     cancelBtn.textContent = 'Cancel';
     btnContainer.appendChild(cancelBtn);
-    cancelBtn.addEventListener('click', function () {
+    cancelBtn.addEventListener('click', () => {
       deleteForm(formBackdrop);
     });
 
@@ -401,13 +397,12 @@ const domElements = (function () {
     confirmBtn.textContent = 'Confirm';
     btnContainer.appendChild(confirmBtn);
 
-    confirmBtn.addEventListener('click', function () {
+    confirmBtn.addEventListener('click', () => {
       if (document.querySelector('#taskDate').value === '') {
         alert('Invalid date, please try again');
         return;
       }
-      applicationFlow.insertTask(projectObject);
-      applicationFlow.displayTaskList(projectObject);
+      App.insertTask(projectObject);
       deleteForm(formBackdrop);
     });
 
@@ -442,7 +437,7 @@ const domElements = (function () {
     const formX = document.createElement('p');
     formX.textContent = 'X';
     formX.setAttribute('class', 'formClose');
-    formX.addEventListener('click', function () {
+    formX.addEventListener('click', () => {
       deleteForm(formBackdrop);
     });
 
@@ -564,7 +559,7 @@ const domElements = (function () {
     cancelBtn.classList.add('cancel');
     cancelBtn.textContent = 'Cancel';
     btnContainer.appendChild(cancelBtn);
-    cancelBtn.addEventListener('click', function () {
+    cancelBtn.addEventListener('click', () => {
       deleteForm(formBackdrop);
     });
 
@@ -573,18 +568,14 @@ const domElements = (function () {
     confirmBtn.textContent = 'Change';
     btnContainer.appendChild(confirmBtn);
 
-    confirmBtn.addEventListener('click', function () {
+    confirmBtn.addEventListener('click', () => {
       if (document.querySelector('#taskDate').value === '') {
         alert('Invalid date, please try again');
         return;
       }
 
-      applicationFlow.editTask(taskObject);
-      // Regenerate task divs without the deleted one
-      const activeProject = document.querySelector('.active p');
-      if (activeProject !== null) activeProject.click();
-      else domElements.showProjectInterface(projectObject);
-
+      App.editTask(taskObject);
+      // eslint-disable-next-line no-use-before-define
       deleteForm(formBackdrop);
     });
 
@@ -600,27 +591,31 @@ const domElements = (function () {
       .insertBefore(formBackdrop, document.querySelector('#header'));
   }
 
+  function selectActiveDiv() {
+    const activeProject = document.querySelector('.active');
+    if (activeProject) activeProject.click();
+  }
+
+  // Handles task reordering
+  function moveDiv(task, direction, container) {
+    const tasks = Array.from(document.querySelectorAll('.taskEntry'));
+    const offset = direction === 'up' ? -1 : 2;
+    const condition =
+      direction === 'up'
+        ? task.taskIndex === 0
+        : task.taskIndex === tasks.length - 1;
+    if (condition) return;
+
+    document
+      .querySelector('#taskList')
+      .insertBefore(container, tasks[task.taskIndex + offset]);
+  }
+
   // Creates a div for a task;
   function createTaskDiv(taskObject) {
     const taskEntry = document.createElement('div');
-    taskEntry.classList.add('taskEntry');
-
-    // eslint-disable-next-line default-case
-    switch (true) {
-      case taskObject.priority === 'low':
-        taskEntry.classList.add('low');
-        break;
-      case taskObject.priority === 'medium':
-        taskEntry.classList.add('medium');
-        break;
-      case taskObject.priority === 'high':
-        taskEntry.classList.add('high');
-    }
-
-    // If the task is completed the change is reflected in how the divs are displayed
-    if (taskObject.completed === true) {
-      taskEntry.classList.add('completed');
-    }
+    taskEntry.setAttribute('class', `taskEntry ${taskObject.priority}`);
+    if (taskObject.completed === true) taskEntry.classList.add('completed');
 
     // Container for task priority, task name, and task moving arrows
     const taskPriority = document.createElement('div');
@@ -636,15 +631,8 @@ const domElements = (function () {
     moveUpIcon.alt = 'This arrow is used to move a task up the list';
     moveUpIcon.classList.add('arrows');
 
-    moveUpIcon.addEventListener('click', function () {
-      // This visually moves the div up one slot
-      const allTaskDivs = Array.from(document.querySelectorAll('.taskEntry'));
-      if (taskObject.taskIndex === 0) return;
-
-      document.querySelector('#taskList').insertBefore(taskEntry, allTaskDivs[taskObject.taskIndex - 1]);
-
-      // This makes the change take place under the hood
-      applicationFlow.moveTask('up', taskObject);
+    moveUpIcon.addEventListener('click', () => {
+      App.moveTask(taskObject, 'up', taskEntry);
     });
 
     const moveDownIcon = document.createElement('img');
@@ -652,15 +640,8 @@ const domElements = (function () {
     moveDownIcon.alt = 'This arrow is used to move a task down the list';
     moveDownIcon.classList.add('arrows');
 
-    moveDownIcon.addEventListener('click', function () {
-      // This visually moves the div down one slot
-      const allTaskDivs = Array.from(document.querySelectorAll('.taskEntry'));
-      if (taskObject.taskIndex === allTaskDivs.length - 1) return;
-
-      document.querySelector('#taskList').insertBefore(taskEntry, allTaskDivs[taskObject.taskIndex + 2]);
-
-      // This makes the change take place under the hood
-      applicationFlow.moveTask('down', taskObject);
+    moveDownIcon.addEventListener('click', () => {
+      App.moveTask(taskObject, 'down', taskEntry);
     });
 
     arrowContainer.appendChild(moveUpIcon);
@@ -669,10 +650,9 @@ const domElements = (function () {
 
     const completedImg = document.createElement('img');
     completedImg.src = taskObject.completed === true ? checkIcon : squareIcon;
-    completedImg.addEventListener('click', function () {
-      applicationFlow.changeCompletedStatus(taskObject, taskEntry);
+    completedImg.addEventListener('click', () => {
+      App.changeCompletedStatus(taskObject, taskEntry);
       completedImg.src = taskObject.completed === true ? checkIcon : squareIcon;
-      localStorageFunctions.updateStoredProjects();
     });
 
     const nameParagraph = document.createElement('p');
@@ -693,7 +673,7 @@ const domElements = (function () {
     // Button to check project info
     const infoImg = document.createElement('img');
     infoImg.src = infoIcon;
-    infoImg.addEventListener('click', function () {
+    infoImg.addEventListener('click', () => {
       const infoDiv = taskEntry.querySelector('.infoDescr');
 
       if (taskObject.info === true && infoDiv !== null) {
@@ -701,10 +681,8 @@ const domElements = (function () {
         taskObject.info = false;
         infoImg.src = infoIcon;
       } else {
-        // Adds evidence of info being displayed or not
         taskObject.info = true;
         infoImg.src = greenInfoIcon;
-        // Container to easily delete the added description
         const infoDescr = document.createElement('div');
         infoDescr.classList.add('infoDescr');
 
@@ -715,9 +693,7 @@ const domElements = (function () {
         infoDescr.appendChild(projectNameHeader);
 
         const projectName = document.createElement('p');
-        projectName.textContent = `${
-          projectData.returnProject(taskObject.projectIndex).name
-        }`;
+        projectName.textContent = `${taskObject.returnProject().name}`;
         projectName.classList.add('taskDescription');
         infoDescr.appendChild(projectName);
 
@@ -749,19 +725,15 @@ const domElements = (function () {
     // Button to edit project info
     const editImg = document.createElement('img');
     editImg.src = editIcon;
-    editImg.addEventListener('click', function () {
+    editImg.addEventListener('click', () => {
       editTaskForm(taskObject);
     });
     statusBar.appendChild(editImg);
 
     const delImg = document.createElement('img');
     delImg.src = crossIcon;
-    delImg.addEventListener('click', function () {
-      confirmDeleteForm(
-        projectData.returnProject(taskObject.projectIndex),
-        'task',
-        taskObject,
-      );
+    delImg.addEventListener('click', () => {
+      confirmDeleteForm(taskObject.returnProject(), 'task', taskObject);
     });
     statusBar.appendChild(delImg);
 
@@ -809,7 +781,7 @@ const domElements = (function () {
     const radioButtons = form.querySelectorAll('input[name="icon"]');
     radioButtons.forEach((button) => {
       if (button.checked === true) {
-        iconUrl = projectData.extractIcon(Number(button.value));
+        iconUrl = icons[Number(button.value)];
       }
     });
 
@@ -860,7 +832,7 @@ const domElements = (function () {
     const newProjectButton = document.createElement('div');
     newProjectButton.setAttribute('id', 'newTask');
     newProjectButton.textContent = '+';
-    newProjectButton.addEventListener('click', function () {
+    newProjectButton.addEventListener('click', () => {
       createTaskForm(projectObject);
     });
     taskCounter.appendChild(newProjectButton);
@@ -884,21 +856,15 @@ const domElements = (function () {
     newProjectBtn.addEventListener('click', createProjectForm);
   }
 
-  // Before adding or deleting tasks and projects, always delete the content of the appropriate div
-  // Elsewise all divs will be doubled on each insertion or deletion
   function deleteGeneratedDivs(selector) {
-    // If there is no project, no need to delete anything
     const firstDiv = document.querySelector(selector);
     if (firstDiv === null) return;
 
     // Creates an array of nodes with all the user projects/tasks
     const allDivs = Array.from(document.querySelectorAll(selector));
-
-    // Iterates over all of the nodes and deletes each one
     allDivs.forEach((projectDiv) => projectDiv.remove());
   }
 
-  // This removes the add task icon
   function deleteAddTaskIcon() {
     const addTaskIcon = document.querySelector('#newTask');
     if (addTaskIcon) addTaskIcon.remove();
@@ -906,7 +872,6 @@ const domElements = (function () {
 
   // Toggles active class for projects
   function setActive(projectContainer) {
-    // If there is an active project, untoggle it
     const activeProject = document.querySelector('.active');
 
     if (activeProject !== null) {
@@ -923,17 +888,14 @@ const domElements = (function () {
     document.querySelector('#list').textContent = '';
   }
 
-  // This function is to be used in standard projects
-  // Since arrow functionality is exclusive to user created projects
-  // Remove them when this function is invoked (in index.js)
+  // Remove arrows for standard projects
   function removeArrows() {
     const allArrowsContainers = document.querySelectorAll('.arrowContainer');
     allArrowsContainers.forEach((arrows) => arrows.remove());
   }
 
-  // This function updates the number of tasks as they get inserted
+  // Update task number counter
   function updateTaskNumber() {
-    // Updates the number of tasks on the list
     const noOfTasks = document.querySelector('#taskCounter p');
     const number = Number(noOfTasks.textContent.split(' ')[0]) + 1;
     noOfTasks.textContent = `${number} Task(s)`;
@@ -942,18 +904,18 @@ const domElements = (function () {
   bindEventListeners();
 
   return {
-    createProjectForm,
     getProjectData,
     createProjectDiv,
     createTaskDiv,
     showProjectInterface,
     deleteGeneratedDivs,
     getTaskData,
-    emptyList,
     deleteAddTaskIcon,
     setActive,
     updateTaskNumber,
     removeArrows,
+    selectActiveDiv,
+    moveDiv,
   };
 })();
 
