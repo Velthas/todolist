@@ -2,9 +2,9 @@ import { isToday } from 'date-fns';
 
 import { projectData } from './todo';
 
-import homeIcon from './images/home.svg';
-import todayIcon from './images/time-twenty-four.svg';
-import urgentIcon from './images/engine-warning.svg';
+import homeIcon from '../images/home.svg';
+import todayIcon from '../images/time-twenty-four.svg';
+import urgentIcon from '../images/engine-warning.svg';
 
 const defaultProjects = (function () {
   // Three default projects as of today
