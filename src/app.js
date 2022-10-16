@@ -29,10 +29,16 @@ const App = (function () {
     Storage.update(projectData.getProjects());
   }
 
+  function deleteProject(project) {
+    projectData.deleteProject(project.position);
+    displayProjects();
+    Storage.update(projectData.getProjects());
+  }
+
   function insertTask(project) {
     const taskInfo = domElements.getTaskData();
     project.insertTask(taskInfo);
-    domElements.updateTaskNumber(); // Updates number in top left of interface
+    domElements.updateTaskNumber();
     displayTaskList(project);
     Storage.update(projectData.getProjects());
   }
@@ -47,7 +53,7 @@ const App = (function () {
   }
 
   function editTask(task) {
-    const data = domElements.getTaskData(); // Extracts new data from the form
+    const data = domElements.getTaskData();
     task.editTask(data); // Update task
     domElements.selectActiveDiv(); // Refreshes current project
     Storage.update(projectData.getProjects());
@@ -62,15 +68,7 @@ const App = (function () {
   function deleteTask(task, project) {
     task.deleteTask();
     displayTaskList(project);
-    const activeProject = document.querySelector('.active'); // <<
-    if (activeProject !== null) activeProject.click();
-    else domElements.showProjectInterface(project);
-    Storage.update(projectData.getProjects());
-  }
-
-  function deleteProject(project) {
-    projectData.deleteProject(project.position);
-    displayProjects(); // Reassigns project indexes to avoid problems
+    domElements.selectActiveDiv();
     Storage.update(projectData.getProjects());
   }
 
@@ -86,7 +84,7 @@ const App = (function () {
       stdProjDiv.addEventListener('click', () => {
         defaultProjects.clear(standardProjects[index]);
         defaultProjects.loadTasks();
-        App.displayTaskList(standardProjects[index]);
+        displayTaskList(standardProjects[index]);
         domElements.setActive(stdProjDiv);
         domElements.deleteAddTaskIcon();
         domElements.removeArrows();
