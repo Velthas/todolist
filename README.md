@@ -5,7 +5,7 @@
 ### 1. Overview
 
 <p>To-do list is a productivity application allowing you to keep track of events and things to do throughout the day.</p>
-<p>This project allowed me to put all the knowledge I had accumulated on objects to the test. I now fully appreciate how versatile objects can be, and can't wait to uncover even more of this tool's amazing potential.</p>
+<p>This project makes abundant use of objects and inheritance and serves to solidify those concepts through practice.</p>
 
 ### 2. Functionality
 
@@ -46,14 +46,3 @@ Standard projects are populated by looking at all the tasks within the projects 
 - **date-fns**: This is the first time I purposefully used a library, aside from those imported in C during CS50. Date-fns is amazing to work with dates, and it allowed me to both format dates to european standards and run some checks for standard projects.
 - **localStorage**: I learned about local storage and session storage, meaning I could finally make my application remember and store projects even when the page is refreshed. This was not without error, as I had to deal with my objects not being saved properly, which led me to learning about JSON and the need for stringification when storing objects. I imagine this is not as safe as using an actual database, but I am still happy The Odin Project pushed me this way.
 - **Linting**: After continuing the javascript path on The Odin Project, I was introduced to code linting and ESlint, so I had to try it for myself. I used the AirBnB style guide, and this time around went through the errors manually to ensure I understood where I went wrong. Needless to say, I think this was a great exercise and I am looking forward to using this tool again for my future projects
-
-### 4. The Great Refactoring of August 22
-
-<p>This is just a joke title for a serious section: after going back to complete the recently added Intermediate HTML and CSS course on the Odin Project, I thought I'd review objects. In doing so, I realized this application was not extremely OOP friendly, and did not employ inheritance to the extent I wanted.</p>
-
-<p>And so I did it. I added, cut, modified and stiched everything back together. It was certainly a challenge, but I am glad I took the time to do it, as I now appreciate the real power of these tools and can see their potential. Let's see what changed:</p>
-
-- **Inheritance**: Before this great refactoring my projects and task objects made no use of inheritance at all, all the now methods were stored inside the project IIFE and called when needed. Not only was this confusing from the outside, but it also made looking for the proper function problematic. All relevant functionality is now attached to the appropriate objects using Object.create in a factory function.
-- **Cleaner interfaces**: My code very much resembled pure functional programming in the beginning (and spaghetti code at that), and this greatly penalized the code's understandability. This time, I made sure that all operations requiring changes on both the DOM and under the hood were combined in the applicationFlow's module. This way, everything is more orderly and understandable, and as a result, adding features does not feel like patchwork.
-- **Localstorage Drama**: Understandably, I had troubles storing up methods in my objects because of JSON's peculiarity. I would lie if I said this was not a head scratcher, but I luckily pulled through with the help of the Object.assign method. I created an object pointing to the object with the methods using Object.create, then stitched my parsed objects on top of it to give them back their methods. Quite a trip, but worth it.
-- **Moving tasks around**: This was something I had already included on request of the reception staff, but I refactored it aswell and I suppose it is worth mentioning: tasks inside of user created projects can now be moved up and down using the arrow icons located on the leftmost side of their container.
