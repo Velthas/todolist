@@ -1,100 +1,156 @@
+:root {
+  --logo-color: #6eb46e;
+  --project-heading: #1c1c1c;
+  --header-background-color: #fefefe;
+  --main-background-color: #fefefe;
+
+  --project-inactive-color: #b3bbc4;
+  --project-inactive-background: #f5f5f5;
+  --project-inactive-color-img-filter: invert(71%) sepia(3%) saturate(1158%) hue-rotate(188deg) brightness(88%) contrast(91%);
+
+  --project-active-color: #6eb46e;
+  --project-active-background: #def8de;
+  --project-active-color-img-filter: invert(79%) sepia(12%) saturate(1210%) hue-rotate(71deg) brightness(89%) contrast(84%);
+
+  --border-outline: rgba(197, 190, 190, 0.616);
+
+  --project-size: 200px;
+}
+
 * {
     box-sizing: border-box;
+
     margin: 0;
     padding: 0;
+}
+
+img {
+  z-index: 1; /* This prevents the images from clipping above the forms */
 }
 
 #header {
     display: flex;
     align-items: center;
+
     height: 10vh;
-    background-color: #25cd7b;
+    background-color: var(--header-color);
+
+    grid-column: 1 / 3;
+    grid-row: 1 / 2;
+}
+
+.grid-container {
+  display: grid;
+  grid-template: 80px 80vh 100px / 300px 1fr;
 }
 
 #header h1 {
-    color: whitesmoke;
-    padding: 8px;
-    letter-spacing: 5px;
-    margin: 0 0 0 2%;
+  color: var(--logo-color);
 
+  padding: 8px;
+  margin: 0px 30px;
+
+  letter-spacing: 5px;
+  border-bottom: 1px solid var(--border-outline);
 }
 
 #main {
-    display: flex;
-    justify-content: stretch;
-    height: 80vh;
+  display: flex;
+  justify-content: stretch;
+  height: 80vh;
 }
 
 #sidebar {
-    color: #757575;
-    width: 280px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: center;
-    border-right: 1px solid rgba(197, 190, 190, 0.616);
-    overflow-y: scroll;
+  background-color: var(--main-background-color);
+
+  width: 300px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+
+  border-right: 1px solid var(--border-outline);
+  overflow-y: auto;
+
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+}
+
+.fixed,
+#userProj {
+  display: flex;
+  justify-content: space-between;
+  align-self: center;
+
+  width: var(--project-size);
+  margin: 20px 0 0 0;
+  padding: 0 10px 8px;
+
+  border-bottom: 3px solid var(--project-active-color);
+  border-radius: 3px;
+
+  color: var(--project-heading);
+  font-size: 18px;
 }
 
 .project,
 .userProject {
-    width: 160px;
+    width: var(--project-size);
+    padding: 8px;
+
+    border: 1px solid transparent;
+    border-radius: 5px;
+
     display: flex;
     justify-content: space-between;
-    padding: 8px;
     gap: 4px;
+
     cursor: pointer;
-    background-color: #efefef
+
+    background-color: var(--main-color);
+    color: var(--project-inactive-color);
+    transition: background-color 0.3s ease-in;
+
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .project:hover,
 .userProject:hover {
-    border: 1px solid #757575;
-    border-radius: 2px;
+    background-color: var(--project-inactive-background);
+    border-radius: 5px;
 }
 
 .project img,
 .userProject img {
     height: 20px;
     width: 20px;
-    filter: brightness(0);
+    
+    filter: var(--project-inactive-color-img-filter);
 }
 
 
 .project.active,
 .userProject.active {
-    background-color: #25cd7b;
-    color: rgb(0, 0, 0);
-    border-radius: 8px;
-    font-weight:bolder;
+    background-color: var(--project-active-background);
+    color: var(--project-active-color);
 }
 
-.fixed,
-#userProj {
-    display: flex;
-    justify-content: space-between;
-    width: 180px;
-    align-self: center;
-    margin: 20px 0 0 0;
-    border-bottom: 1px solid gray;
-    padding: 0 10px 8px;
-    font-size: 18px;
+.project.active img,
+.userProject.active img {
+  filter: var(--project-active-color-img-filter);
 }
 
 #home,
 #today,
 #urgent {
-    gap: 35px;
+    gap: 50px;
     justify-content: flex-start;
 }
 
-.project.active:hover {
-  border: none;  
-}
-
-
 div#userProjList {
     gap: 3px;
+
     display: flex;
     flex-direction: column;
 }
@@ -103,34 +159,40 @@ div#newProj,
 div#newTask {
     font-size: 15px;
     font-weight: bold;
-    border-radius: 15px;
-    border: #8d8989 1px solid;
-    color: #757575;
+
+    border-radius: 8px;
+    border: var(--project-inactive-color) 1px solid;
+
+    color: var(--project-inactive-color);
+
     width: 20px;
     height: 20px;
+
     display: flex;
     justify-content: center;
     align-items: center;
+
     cursor: pointer;
     transition: 0.3s;
 }
 
 div#newProj:hover,
 div#newTask:hover {
-    border: 1px solid #25cd7b;
-    color: #25cd7b;
-}
-
-.userProject.active:hover {
-    border: none;
+    border: 1px solid var(--project-active-color);
+    color: var(--project-active-color);
 }
 
 #list {
     width: -webkit-fill-available;
+
     display: flex;
     flex-direction: column;
     gap: 10%;
-    overflow-y: scroll;
+
+    overflow-y: auto;
+
+    grid-column: 2 / 3;
+    grid-row: 1 / 3;
 }
 
 #taskHeader {
@@ -140,19 +202,30 @@ div#newTask:hover {
 }
 
 #taskCounter {
-    margin: 0 5% 2% 5%;
-    border-bottom: 1px solid #757575;
-    padding: 0 10px 5px;
-    display: flex;
-    justify-content: space-between;
-}
+  border-bottom: 3px solid var(--logo-color);
+  border-radius: 3px;
+
+  margin: 0 20px 15px 20px;
+  padding: 0 10px 5px;
+
+  display: flex;
+  justify-content: space-between;
+  }
+
+  #taskCounter p {
+    color: var(--project-inactive-color);
+  }
 
 .taskEntry {
     min-width: -webkit-fill-available;
+
     width: min-content;
-    margin: 0 5% 2% 5%;
-    border-radius: 5px;
     padding: 6px;
+    margin: 0 5% 2% 5%;
+
+    border-radius: 5px;
+
+    box-shadow: 0px 2px 5px #d3d1d1;
 }
 
 .flex {
@@ -172,8 +245,8 @@ div#newTask:hover {
     height: 10px;
 }
 
-.taskDate {
-    color: #25cd7b;
+.datePara {
+    color: var(--project-inactive-color);
     margin-right: 10px;
 }
 
@@ -188,19 +261,16 @@ div#newTask:hover {
     color:#757575;
 }
 
-.taskEntry.low,
-.low .infoDescr {
-    background-color: #e8f5e9;
+.taskEntry.low {
+  border-left: 8px solid #31a33d;
 }
 
-.taskEntry.medium,
-.medium .infoDescr {
-    background-color: #fff3e0;
+.taskEntry.medium {
+  border-left: 8px solid #ebb154;
 }
 
-.taskEntry.high,
-.high .infoDescr {
-    background-color: #ffebee
+.taskEntry.high {
+  border-left: 8px solid #f36f82;
 }
 
 .taskEntry.completed,
@@ -210,7 +280,7 @@ div#newTask:hover {
 }
 
 .statusBar img:hover {
-    transform: scale(1.25);
+    transform: scale(1.15);
     transition: filter smooth 0.3s;
     filter: brightness(0)
 }
@@ -228,27 +298,36 @@ div#newTask:hover {
 .taskEntry img {
     width: 18px;
     height: 18px;
+    filter: var(--project-inactive-color-img-filter);
+
     cursor: pointer;
 }
 
 .taskEntry .statusBar {
     padding: 5px 5px;
+
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
 .taskEntry * {
-    align-self: center;
+  font-family: Arial, Helvetica, sans-serif;
+  align-self: center;
 }
 
 #footer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 10vh;
-    border-top: 1px solid rgba(197, 190, 190, 0.616)
+  margin-top: 20px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  height: 10vh;
+  border-top: 1px solid rgba(197, 190, 190, 0.616);
+
+  grid-column: 1/3;
 }
 
 #footer a {

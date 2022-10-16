@@ -1,33 +1,36 @@
 @media screen and (max-width: 700px) {
+    .grid-container {
+       grid-template: 80px 1fr min-content 100px / 1fr;
+    }
+
     #header {
+        grid-row: 1 / 2;
         justify-content: center;
         height: 8vh;
     }
 
-    #main {
-        flex-direction: column;
-        padding-bottom: 16px;
-        gap: 5%;
-        height: fit-content;
-    }
-
     #sidebar {
+        grid-row: 2 / 3;
+
         width: 100vw;
         padding-bottom: 16px;
+
         overflow-y: initial;
+        border-right: none;
     }
 
     #list {
+        grid-row: 3 / 4;
+        grid-column: 1 / 2;
+
         border-top: 1px solid rgba(197, 190, 190, 0.616);
-        overflow-y: initial;
-        height: fit-content;
         padding-bottom: 16px;
+
+        overflow-y: initial;
+
         min-height: 300px;
+        height: fit-content;
 
-    }
-
-    .project img, .userProject img {
-        filter: none;
     }
 
     div#newTaskContainer {
@@ -40,7 +43,8 @@
     div#deleteFormContainer {
         width: 340px;
     }
-    .statusBar img:hover {
-        filter: none;
+
+    #footer {
+        grid-row: 4 / 5;
     }
 }
