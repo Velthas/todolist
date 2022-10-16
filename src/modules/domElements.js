@@ -142,7 +142,7 @@ const domElements = (function () {
     formContainer.appendChild(projectDatas);
     formBackdrop.appendChild(formContainer);
     document
-      .querySelector('body')
+      .querySelector('.grid-container')
       .insertBefore(formBackdrop, document.querySelector('#header'));
   }
 
@@ -253,7 +253,7 @@ const domElements = (function () {
     // Now append everything to make it appear
     formBackdrop.appendChild(formContainer);
     document
-      .querySelector('body')
+      .querySelector('.grid-container')
       .insertBefore(formBackdrop, document.querySelector('#header'));
   }
 
@@ -414,7 +414,7 @@ const domElements = (function () {
     formBackdrop.appendChild(formContainer);
 
     document
-      .querySelector('body')
+      .querySelector('.grid-container')
       .insertBefore(formBackdrop, document.querySelector('#header'));
   }
 
@@ -529,7 +529,6 @@ const domElements = (function () {
 
     const priorities = ['Low', 'Medium', 'High'];
 
-    // Dinamically generate the priorities options
     for (let i = 0; i < priorities.length; i++) {
       const option = document.createElement('option');
       option.setAttribute('value', `${priorities[i].toLowerCase()}`);
@@ -575,20 +574,17 @@ const domElements = (function () {
       }
 
       App.editTask(taskObject);
-      // eslint-disable-next-line no-use-before-define
       deleteForm(formBackdrop);
     });
 
     projectDatas.appendChild(btnContainer);
-
-    // Now append everything to make it appear
+    
     formContainer.appendChild(projectDatas);
-
     formBackdrop.appendChild(formContainer);
 
     document
       .querySelector('body')
-      .insertBefore(formBackdrop, document.querySelector('#header'));
+      .insertBefore(formBackdrop, document.querySelector('.grid-container'));
   }
 
   function selectActiveDiv() {
@@ -847,7 +843,7 @@ const domElements = (function () {
 
     // Append everything
     list.appendChild(taskContainer);
-    document.querySelector('#main').appendChild(list);
+    document.querySelector('.grid-container').insertBefore(list, document.querySelector('#footer'));
   }
 
   // Binds generic event listeners
