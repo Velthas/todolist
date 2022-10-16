@@ -86,7 +86,10 @@ const projectData = (function () {
     projectObject.position = projects.length - 1;
   }
 
-  const deleteProject = (position) => projects.splice(position, 1);
+  const deleteProject = (position) => {
+    projects.splice(position, 1);
+    updatePositions();
+  };
 
   const getProjects = () => projects;
 
